@@ -6,4 +6,5 @@
 
 (defpage "/welcome" []
          (common/layout
-           [:p "Welcome to clojento"]))
+           [:h1 "Welcome to clojento"]
+           [:hr]))
