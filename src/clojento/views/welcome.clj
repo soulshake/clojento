@@ -4,10 +4,10 @@
         [noir.response :only [redirect]]
         [hiccup.core :only [html]]))
 
-(defpage root "/" []
+(defpage root "/" {}
   (redirect (url-for dashboard)))
 
-(defpage dashboard "/welcome" []
+(defpage dashboard "/welcome" {}
   (common/layout
     [:h1 "Welcome to clojento"]
     [:hr]))
