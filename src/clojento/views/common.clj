@@ -39,6 +39,7 @@
 					[:ul.dropdown
 						[:li [:a {:href (url-for clojento.views.admin/users_index)} "Users"]]
 						[:li [:a {:href (url-for clojento.views.admin/roles_index)} "Roles"]]]]
+				[:li [:a {:href (url-for clojento.views.admin/scheduler-jobs)} "Scheduler"]]
 			]
 		]
 	])

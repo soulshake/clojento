@@ -2,7 +2,6 @@
 	(:require [clojento.models.common :as common])
 	(:use [korma.core]))
 
-(def role-fields (fields [:role_id :id] [:role_name :name] [:role_type :type]))
 (defentity role
 	(table :admin_role)
 	(database common/db))
@@ -12,4 +11,4 @@
 	(database common/db))
 
 (def all-users (select user))
-(def all-roles (select role role-fields))
+(def all-roles (select role (fields [:role_id :id] [:role_name :name] [:role_type :type])))

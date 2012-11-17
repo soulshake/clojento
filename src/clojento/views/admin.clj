@@ -1,5 +1,5 @@
 (ns clojento.views.admin
-  (:require [clojento.models.admin :as admin] [clojento.views.common :as common])
+  (:require [clojento.models.admin :as admin] [clojento.views.common :as common] clojento.models.scheduler)
   (:use [noir.core :only [defpage defpartial url-for]]
         [noir.response :only [redirect]]
         [hiccup.core :only [html]]))
@@ -16,7 +16,6 @@
 		[:td firstname]
 		[:td lastname]
 	])
-
 
 (defpage users_index "/admin/users" {} (common/layout
 	[:h1 "Users"]
@@ -56,4 +55,30 @@
 			]]
 			[:tbody (map role-line roles) ]
 		])))
+
+(defpartial job-line [{:keys [id code status created_at scheduled_at executed_at finished_at]}]
+	[:tr
+		[:td id]
+		[:td code]
+		[:td (if (= status "success") [:span.success.round.label status] [:span.secondary.round.label status])]
+		[:td created_at]
+		[:td scheduled_at]
+		[:td executed_at]
+		[:td finished_at]])
+
+(defpage scheduler-jobs "/scheduler/jobs" {} (common/layout
+	[:h1 "Scheduler > Jobs"]
+	[:hr]
+	[:table
+		[:thead [:tr
+			[:th "id"]
+			[:th "code"]
+			[:th "status"]
+			[:th "created_at"]
+			[:th "scheduled_at"]
+			[:th "executed_at"]
+			[:th "finished_at"]
+		]]
+		[:tbody (map job-line clojento.models.scheduler/jobs) ]
+		]))
 
