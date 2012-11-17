@@ -1,6 +1,6 @@
 (ns clojento.views.admin
   (:require [clojento.models.admin :as admin] [clojento.views.common :as common])
-  (:use [noir.core :only [defpage url-for]]
+  (:use [noir.core :only [defpage defpartial url-for]]
         [noir.response :only [redirect]]
         [korma.core :only [select fields]]
         [hiccup.core :only [html]]))
@@ -10,10 +10,19 @@
 	[:h1 (str "User " id " Detail Page")]
 	[:hr]))
 
+(defpartial user-line [{:keys [user_id username firstname lastname]}]
+	[:tr
+		[:td user_id]
+		[:td [:a {:href (url-for user_show {:id user_id})} username]]
+		[:td firstname]
+		[:td lastname]
+	])
+
+
 (defpage users_index "/admin/users" {} (common/layout
 	[:h1 "Users"]
 	[:hr]
-	(let [users (select admin/user) user (first users)]
+	(let [users (select admin/user)]
 		[:table
 			[:thead [:tr
 				[:th "id"]
@@ -21,14 +30,7 @@
 				[:th "firstname"]
 				[:th "lastname"]
 			]]
-			[:tbody
-				[:tr
-					[:td (get user :user_id)]
-					[:td [:a {:href (url-for user_show {:id (get user :user_id)})} (get user :username)]]
-					[:td (get user :firstname)]
-					[:td (get user :lastname)]
-				]
-			]
+			[:tbody (map user-line users) ]
 		])))
 
 (defpage role_show "/admin/role/:id" {id :id}
@@ -36,22 +38,23 @@
 	[:h1 (str "Role " id " Detail Page")]
 	[:hr]))
 
+(defpartial role-line [{id :role_id, name :role_name, type :role_type}]
+	[:tr
+		[:td id]
+		[:td [:a {:href (url-for role_show {:id id})} name]]
+		[:td type]
+	])
+
 (defpage roles_index "/admin/roles" {} (common/layout
 	[:h1 "Roles"]
 	[:hr]
-	(let [roles (select admin/role) role (first roles)]
+	(let [roles (select admin/role)]
 		[:table
 			[:thead [:tr
 				[:th "id"]
 				[:th "name"]
 				[:th "type"]
 			]]
-			[:tbody
-				[:tr
-					[:td (get role :role_id)]
-					[:td [:a {:href (url-for role_show {:id (get role :role_id)})} (get role :role_name)]]
-					[:td (get role :role_type)]
-				]
-			]
+			[:tbody (map role-line roles) ]
 		])))
 
