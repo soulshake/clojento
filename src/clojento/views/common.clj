@@ -34,8 +34,11 @@
 			[:ul.left
 				[:li.divider]
 				[:li [:a {:href (url-for clojento.views.products/index)} "Products"]]
-				[:li [:a {:href (url-for clojento.views.admin/users_index)} "Users"]]
-				[:li [:a {:href (url-for clojento.views.admin/roles_index)} "Roles"]]
+				[:li.has-dropdown
+					[:a "Admin"]
+					[:ul.dropdown
+						[:li [:a {:href (url-for clojento.views.admin/users_index)} "Users"]]
+						[:li [:a {:href (url-for clojento.views.admin/roles_index)} "Roles"]]]]
 			]
 		]
 	])
