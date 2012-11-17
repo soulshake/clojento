@@ -2,7 +2,6 @@
   (:require [clojento.models.admin :as admin] [clojento.views.common :as common])
   (:use [noir.core :only [defpage defpartial url-for]]
         [noir.response :only [redirect]]
-        [korma.core :only [select fields]]
         [hiccup.core :only [html]]))
 
 (defpage user_show "/admin/user/:id" {id :id}
@@ -22,7 +21,7 @@
 (defpage users_index "/admin/users" {} (common/layout
 	[:h1 "Users"]
 	[:hr]
-	(let [users (select admin/user)]
+	(let [users admin/all-users]
 		[:table
 			[:thead [:tr
 				[:th "id"]
@@ -38,7 +37,7 @@
 	[:h1 (str "Role " id " Detail Page")]
 	[:hr]))
 
-(defpartial role-line [{id :role_id, name :role_name, type :role_type}]
+(defpartial role-line [{:keys [id name type]}]
 	[:tr
 		[:td id]
 		[:td [:a {:href (url-for role_show {:id id})} name]]
@@ -48,7 +47,7 @@
 (defpage roles_index "/admin/roles" {} (common/layout
 	[:h1 "Roles"]
 	[:hr]
-	(let [roles (select admin/role)]
+	(let [roles admin/all-roles]
 		[:table
 			[:thead [:tr
 				[:th "id"]
