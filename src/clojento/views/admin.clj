@@ -82,3 +82,13 @@
 		[:tbody (map job-line clojento.models.scheduler/jobs) ]
 		]))
 
+(defn job-values [job] 
+	(clojure.string/join "\t" (map job [:id :code :status :created_at :scheduled_at :executed_at :finished_at])))
+
+(defpage "/data/jobs.tsv" {} (noir.response/content-type "text/tab-separated-values; charset=utf-8" 
+	(clojure.string/join "\n"
+		(cons
+			(clojure.string/join "\t" ["id" "code" "status" "created_at" "scheduled_at" "executed_at" "finished_at"])
+			(map job-values clojento.models.scheduler/jobs)))))
+
+
