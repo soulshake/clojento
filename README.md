@@ -1,17 +1,16 @@
 # clojento
 
-A website written in noir. 
+Magento Tools
 
 ## Usage
 
 ```bash
 lein deps
-lein run
+lein repl
 ```
 
 ## License
 
 Copyright (C) 2011 Jean-Luc Geering
 
-Distributed under the Eclipse Public License, the same as Clojure.
-
+Distributed under the MIT License (MIT).
