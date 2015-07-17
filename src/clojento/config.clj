@@ -4,6 +4,8 @@
 
 (l/info "loading clojento.config namespace")
 
+; see https://github.com/clojure-cookbook/clojure-cookbook/blob/master/04_local-io/4-15_edn-config.asciidoc
+
 (defn deep-merge
   "Deep merge two maps"
   [& values]
@@ -11,10 +13,13 @@
     (apply merge-with deep-merge values)
     (last values)))
 
-    (require '[clojure.edn :as edn])
-
+;(defn load-config
+;  "Given a filename, load & return a config map"
+;  [filename]
+;  (edn/read-string (slurp filename)))
 
 (defn load-config
-  "Given a filename, load & return a config file"
-  [filename]
-  (edn/read-string (slurp filename)))
+  "Given filename(s), load then merge & return a config map"
+  [& filenames]
+  (reduce deep-merge (map (comp edn/read-string slurp)
+                          filenames)))
