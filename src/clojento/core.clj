@@ -12,4 +12,4 @@
 (defn example-system [config-options]
   (let [{:keys [host port]} config-options]
     (component/system-map
-     :config (c/config))))
+     :configurator (c/configurator []))))

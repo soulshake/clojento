@@ -19,22 +19,30 @@
 ;  [filename]
 ;  (edn/read-string (slurp filename)))
 
-(defn load-config
-  "Given filename(s), load then merge & return a config map"
-  [& filenames]
-  (reduce deep-merge (map (comp edn/read-string slurp)
-                          filenames)))
+;(defn load-config
+;  "Given filename(s), load then merge & return a config map"
+;  [& filenames]
+;  (reduce deep-merge (map (comp edn/read-string slurp)
+;                          filenames)))
 
-(defrecord Config []
+(defn load-config [filenames]
+  (l/info "loading config")
+  {:host "localhost" :port 32783})
+
+(defrecord Configurator [filenames config]
   component/Lifecycle
 
   (start [this]
-         (l/info "loading config")
-         (assoc this :config {:host "localhost" :port 32783}))
+         (if config ; already started
+           this
+           (assoc this :config (load-config filenames))))
 
   (stop [this]
-        (l/info "unloading config")
-        (dissoc this :config)))
+        (if (not config) ; already stopped
+          this
+          (do
+            (l/info "unloading config")
+            (assoc this :config nil)))))
 
-(defn config []
-  (map->Config {}))
+(defn configurator [filenames]
+  (map->Configurator {:filenames filenames}))
