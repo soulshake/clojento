@@ -14,20 +14,14 @@
     (apply merge-with deep-merge values)
     (last values)))
 
-;(defn load-config
-;  "Given a filename, load & return a config map"
-;  [filename]
-;  (edn/read-string (slurp filename)))
-
-;(defn load-config
-;  "Given filename(s), load then merge & return a config map"
-;  [& filenames]
-;  (reduce deep-merge (map (comp edn/read-string slurp)
-;                          filenames)))
+(defn load-config-from-file
+  "Given a filename, load & return a config map"
+  [filename]
+  (edn/read-string (slurp filename)))
 
 (defn load-config [filenames]
   (l/info "loading config")
-  {:host "localhost" :port 32783})
+  (reduce deep-merge (map load-config-from-file filenames)))
 
 (defrecord Configurator [filenames config]
   component/Lifecycle
