@@ -46,3 +46,17 @@
 
 (defn configurator [filenames]
   (map->Configurator {:filenames filenames}))
+
+; PUBLIC API
+
+(defn config
+  ([configurator key]
+   (get (:config configurator) key))
+  ([configurator key not-found]
+   (get (:config configurator) key not-found)))
+
+(defn config-in
+ ([configurator ks]
+  (get-in (:config configurator) ks))
+ ([configurator ks not-found]
+  (get-in (:config configurator) ks not-found)))
