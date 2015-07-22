@@ -31,6 +31,7 @@
    (c/config configurator :db)))
 
 (defn make-datasource [configurator]
+  (l/info "starting connection pool")
   (hikari/make-datasource (datasource-options configurator)))
 
 ; TODO make idempotent
@@ -38,21 +39,17 @@
   component/Lifecycle
 
   (start [this]
-         (l/info "starting connection pool")
-
-         (let [ds (make-datasource configurator)]
-           ;; Return an updated version of the component with
-           ;; the run-time state assoc'd in.
-           (assoc this :datasource ds)))
+         (if datasource  ; already started
+           this
+           (assoc this :datasource (make-datasource configurator))))
 
   (stop [this]
-        (l/info "stopping connection pool")
-
-        (hikari/close-datasource datasource)
-        ;(.close connection)
-        ;; Return the component, optionally modified. Remember that if you
-        ;; dissoc one of a record's base fields, you get a plain map.
-        (assoc this :datasource nil)))
+        (if (not datasource) ; already stopped
+          this
+          (do
+            (l/info "stopping connection pool")
+            (hikari/close-datasource datasource)
+            (assoc this :datasource nil)))))
 
 (defn new-database []
   (map->Database {}))
