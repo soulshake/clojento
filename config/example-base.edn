@@ -1,2 +1,2 @@
-{:db {:host "localhost"
-      :port 1234}}
+{:db {:server-name "localhost"
+      :port-number 1234}}

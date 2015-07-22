@@ -6,6 +6,8 @@
                  [org.clojure/java.jdbc "0.3.7"]
                  [com.stuartsierra/component "0.2.3"]
                  [com.taoensso/timbre "4.0.2"]
+                 [hikari-cp "1.2.4" :exclusions [com.zaxxer/HikariCP]]
+                 [com.zaxxer/HikariCP-java6 "2.3.9"]
                  [mysql/mysql-connector-java "5.1.35"]
                  [yesql "0.4.0"]]
   :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.2.11"]]

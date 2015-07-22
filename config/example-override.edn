@@ -1,1 +1,2 @@
-{:db {:port 32783}}
+{:db {:port-number 32783
+      :read-only   true}}

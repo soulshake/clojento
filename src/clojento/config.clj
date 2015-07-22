@@ -38,7 +38,7 @@
             (l/info "unloading config")
             (assoc this :config nil)))))
 
-(defn configurator [filenames]
+(defn new-configurator [filenames]
   (map->Configurator {:filenames filenames}))
 
 ; PUBLIC API
