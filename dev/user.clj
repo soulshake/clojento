@@ -31,6 +31,7 @@
     (fn [s] (when s (component/stop s)))))
 
 (defn go []
+  (logback/set-level "ROOT" :info)
   (init)
   (start)
   :ready)
