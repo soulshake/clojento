@@ -14,6 +14,7 @@
 
   (:require [com.stuartsierra.component :as component]
             [clojure.tools.namespace.repl :refer [refresh refresh-all]]
+            [clojento.logback :as logback]
             [clojento.core :as app]))
 
 (def system nil)
