@@ -7,6 +7,7 @@
                  [ch.qos.logback/logback-classic "1.1.3"]
                  [com.stuartsierra/component "0.2.3"]
                  [com.taoensso/timbre "4.0.2"]
+                 [funcool/clojure.jdbc "0.5.1"]
                  [hikari-cp "1.2.4" :exclusions [com.zaxxer/HikariCP]]
                  [com.zaxxer/HikariCP-java6 "2.3.9"]
                  [mysql/mysql-connector-java "5.1.35"]

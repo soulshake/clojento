@@ -10,8 +10,10 @@ lein repl
 ```
 
 ```clojure
-(reset)
+(go)
 (clojento.config/config (:configurator system) :db)
+(clojento.magento.db/fetch (:db system) "SELECT * FROM core_website")
+(reset)
 ```
 
 ## License

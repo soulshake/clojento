@@ -2,6 +2,7 @@
   (:require [com.stuartsierra.component :as component]
             [clojento.config :as c]
             [hikari-cp.core :as hikari]
+            [jdbc.core :as jdbc]
             [taoensso.timbre :as l]))
 
 (l/info "loading clojento.magento.db namespace")
@@ -53,3 +54,9 @@
 
 (defn new-database []
   (map->Database {}))
+
+; PUBLIC API
+
+(defn fetch [db stmt]
+  (with-open [conn (jdbc/connection (:datasource db))]
+    (jdbc/fetch conn stmt)))
