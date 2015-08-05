@@ -1,9 +1,9 @@
 (ns clojento.config
   (:require [clojure.edn :as edn]
             [com.stuartsierra.component :as component]
-            [taoensso.timbre :as l]))
+            [taoensso.timbre :as log]))
 
-(l/info "loading clojento.config namespace")
+(log/info "loading clojento.config namespace")
 
 ; see https://github.com/clojure-cookbook/clojure-cookbook/blob/master/04_local-io/4-15_edn-config.asciidoc
 
@@ -20,7 +20,7 @@
   (edn/read-string (slurp filename)))
 
 (defn load-config [filenames]
-  (l/info "loading config")
+  (log/info "loading config")
   (reduce deep-merge (map load-config-from-file filenames)))
 
 (defrecord Configurator [filenames config]
@@ -35,7 +35,7 @@
         (if (not config) ; already stopped
           this
           (do
-            (l/info "unloading config")
+            (log/info "unloading config")
             (assoc this :config nil)))))
 
 (defn new-configurator [filenames]

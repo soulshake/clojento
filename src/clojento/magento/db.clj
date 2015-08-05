@@ -1,11 +1,11 @@
 (ns clojento.magento.db
   (:require [com.stuartsierra.component :as component]
-            [clojento.config :as c]
+            [clojento.config :as config]
             [hikari-cp.core :as hikari]
             [jdbc.core :as jdbc]
-            [taoensso.timbre :as l]))
+            [taoensso.timbre :as log]))
 
-(l/info "loading clojento.magento.db namespace")
+(log/info "loading clojento.magento.db namespace")
 
 ; see https://github.com/tomekw/hikari-cp
 ; all time values are specified in milliseconds
@@ -29,10 +29,10 @@
 (defn datasource-options [configurator]
   (merge
    (default-datasource-options)
-   (c/config configurator :db)))
+   (config/config configurator :db)))
 
 (defn make-datasource [configurator]
-  (l/info "starting connection pool")
+  (log/info "starting connection pool")
   (hikari/make-datasource (datasource-options configurator)))
 
 ; TODO make idempotent
@@ -48,7 +48,7 @@
         (if (not datasource) ; already stopped
           this
           (do
-            (l/info "stopping connection pool")
+            (log/info "stopping connection pool")
             (hikari/close-datasource datasource)
             (assoc this :datasource nil)))))
 

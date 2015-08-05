@@ -1,9 +1,9 @@
 (ns clojento.logback
-  (:require [taoensso.timbre :as l])
+  (:require [taoensso.timbre :as log])
   (:import [org.slf4j LoggerFactory]
            [ch.qos.logback.classic Level]))
 
-(l/info "loading clojento.logback namespace")
+(log/info "loading clojento.logback namespace")
 
 ;(defrecord Logger [name level effective])
 
