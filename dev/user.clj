@@ -15,7 +15,8 @@
   (:require [com.stuartsierra.component :as component]
             [clojure.tools.namespace.repl :refer [refresh refresh-all]]
             [clojento.logback :as logback]
-            [clojento.core :as app]))
+            [clojento.core :as app]
+            [clojento.magento :as mage]))
 
 (def system nil)
 
@@ -39,3 +40,6 @@
 (defn reset []
   (stop)
   (refresh :after 'user/go))
+
+(defn asdf []
+  (mage/load-product (:magento system) 806))

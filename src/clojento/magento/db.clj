@@ -3,7 +3,8 @@
             [clojento.config :as config]
             [hikari-cp.core :as hikari]
             [jdbc.core :as jdbc]
-            [taoensso.timbre :as log]))
+            [taoensso.timbre :as log]
+            [yesqueries.core :as yq]))
 
 (log/info "loading clojento.magento.db namespace")
 
@@ -35,14 +36,15 @@
   (log/info "starting connection pool")
   (hikari/make-datasource (datasource-options configurator)))
 
-; TODO make idempotent
-(defrecord Database [configurator datasource]
+(defrecord Database [configurator datasource queries]
   component/Lifecycle
 
   (start [this]
          (if datasource  ; already started
            this
-           (assoc this :datasource (make-datasource configurator))))
+           (assoc this
+                  :datasource (make-datasource configurator)
+                  :queries (yq/load-queries "clojento/magento/queries.sql"))))
 
   (stop [this]
         (if (not datasource) ; already stopped
@@ -50,13 +52,26 @@
           (do
             (log/info "stopping connection pool")
             (hikari/close-datasource datasource)
-            (assoc this :datasource nil)))))
-
-(defn new-database []
-  (map->Database {}))
+            (assoc this
+                   :datasource nil
+                   :queries nil)))))
 
 ; PUBLIC API
 
-(defn fetch [db stmt]
+(defn new-database []
+  "Database component requires a Configurator component"
+  (map->Database {}))
+
+(defn get-connection
+  [params]
+  ())
+
+(defn run-query [db query-name params]
   (with-open [conn (jdbc/connection (:datasource db))]
-    (jdbc/fetch conn stmt)))
+    (let [q (get (:queries db) query-name)
+          stmt (yq/sqlvec-raw (:split q) params)]
+      (log/info  "fetching " stmt)
+      (jdbc/fetch conn stmt))))
+
+
+; TODO run_and_time_query

@@ -1,0 +1,6 @@
+{:db {:server-name   "192.168.99.100"
+      :port-number   32776
+      :username      "root"
+      :password      "123"
+      :database-name "magento"
+      :read-only     true}}
