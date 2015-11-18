@@ -16,7 +16,8 @@
             [clojure.tools.namespace.repl :refer [refresh refresh-all]]
             [clojento.logback :as logback]
             [clojento.core :as app]
-            [clojento.magento :as mage]))
+            [clojento.magento :as mage]
+            [midje.repl :refer [autotest]]))
 
 (def system nil)
 

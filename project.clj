@@ -13,5 +13,6 @@
                  [com.zaxxer/HikariCP-java6 "2.3.9"]
                  [mysql/mysql-connector-java "5.1.35"]
                  [yesql "0.4.2"]]
-  :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.2.11"]]
+  :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.2.11"]
+                                  [midje "1.8.2"]]
                    :source-paths ["dev"]}})

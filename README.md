@@ -16,6 +16,12 @@ lein repl
 (reset)
 ```
 
+running tests in the repl:
+
+```clojure
+(autotest)
+```
+
 ## License
 
 Copyright (C) 2011 Jean-Luc Geering
