@@ -41,6 +41,9 @@
 (defn new-configurator [filenames]
   (map->Configurator {:filenames filenames}))
 
+(defn static-configurator [config]
+  {:config config})
+
 ; PUBLIC API
 
 (defn config
