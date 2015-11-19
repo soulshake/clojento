@@ -14,5 +14,6 @@
                  [mysql/mysql-connector-java "5.1.35"]
                  [yesql "0.4.2"]]
   :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.2.11"]
-                                  [midje "1.8.2"]]
+                                  [midje "1.8.2"]
+                                  [com.h2database/h2 "1.3.176"]]
                    :source-paths ["dev"]}})

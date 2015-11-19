@@ -1,3 +1,7 @@
+-- name: check
+-- no comment
+SELECT 'passed' as check
+
 -- name: websites
 -- no comment
 SELECT website_id as id, code

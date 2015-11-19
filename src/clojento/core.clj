@@ -23,3 +23,9 @@
     :configurator (config/new-configurator ["config/vgl.edn"])
     :db (component/using (magento-db/new-database) [:configurator])
     :magento (component/using (magento/map->Magento {}) [:db]))))
+
+
+(defn base-system []
+  (component/system-map
+   :configurator (config/static-configurator {})
+   :db (component/using (magento-db/new-database) [:configurator])))

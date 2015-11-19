@@ -20,12 +20,7 @@
    :minimum-idle       10
    :maximum-pool-size  10
    :pool-name          "db-pool"
-   :adapter            "mysql"
-   :username           "username"
-   :password           "password"
-   :database-name      "database"
-   :server-name        "localhost"
-   :port-number        3306})
+   :adapter            "mysql"})
 
 (defn datasource-options [configurator]
   (merge
