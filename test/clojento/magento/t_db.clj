@@ -34,14 +34,23 @@
 
 (def system (atom nil))
 
+; TODO review (namespace-state-changes)
+
+; TODO wrap in (facts ...), maybe?
 (with-state-changes [(before :facts (reset! system (fresh-system (fn []) db-config-in-memory)))
                      (after  :facts (component/stop @system))]
+  (log/info "starting tests with in-memory DB")
   (fact "db exists"
-        (first (run-query (:db @system) :check [])) => {:check "passed"}))
+        (first (run-query (:db @system) :check [])) => {:check "passed"})
+  (log/info "completed tests with in-memory DB"))
 
-(with-state-changes [(before :facts (reset! system (fresh-system prepare-test-db db-config-ro)))
-                     (after  :facts (component/stop @system))]
+
+; TODO wrap in (facts ...), possibly?
+(with-state-changes [(before :contents (reset! system (fresh-system prepare-test-db db-config-ro)))
+                     (after  :contents (component/stop @system))]
+  (log/info "starting tests with read-only DB")
   (fact "migration table exists"
         (raw-jdbc-fetch (:db @system) "show tables;") => (contains {:table_name "ragtime_migrations", :table_schema "public"}))
   (fact "migration table exists"
-        (raw-jdbc-fetch (:db @system) "show tables;") => (contains {:table_name "core_store", :table_schema "public"})))
+        (raw-jdbc-fetch (:db @system) "show tables;") => (contains {:table_name "core_store", :table_schema "public"}))
+  (log/info "completed tests with read-only DB"))
