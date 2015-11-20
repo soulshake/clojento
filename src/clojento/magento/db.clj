@@ -61,12 +61,14 @@
   [params]
   ())
 
-(defn run-query [db query-name params]
+(defn run-query [db query-name params & {:keys [debug] :or {debug false}}]
   (with-open [conn (jdbc/connection (:datasource db))]
     (let [q (get (:queries db) query-name)
           stmt (yq/sqlvec-raw (:split q) params)]
       (log/info  "fetching " stmt)
-      (jdbc/fetch conn stmt))))
+      (if debug
+        (with-meta (jdbc/fetch conn stmt))
+        (jdbc/fetch conn stmt)))))
 
 (defn raw-jdbc-execute [db stmt-or-sqlvec]
   (with-open [conn (jdbc/connection (:datasource db))]

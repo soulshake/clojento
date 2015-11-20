@@ -42,6 +42,9 @@
   (log/info "starting tests with in-memory DB")
   (fact "db exists"
         (first (run-query (:db @system) :check [])) => {:check "passed"})
+  (fact "meta on query result only when requested"
+        (meta (run-query (:db @system) :check [])) => nil
+        (meta (run-query (:db @system) :check [] :debug true)) =not=> nil)
   (log/info "completed tests with in-memory DB"))
 
 
