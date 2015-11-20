@@ -17,6 +17,8 @@
             [clojento.logback :as logback]
             [clojento.core :as app]
             [clojento.magento :as mage]
+            [ragtime.jdbc]
+            [ragtime.repl]
             [midje.repl :refer [autotest]]))
 
 (def system nil)
@@ -44,3 +46,18 @@
 
 (defn asdf []
   (mage/load-product (:magento system) 806))
+
+(def test-db "jdbc:mysql://192.168.99.100:32776/mage2?user=root&password=123")
+
+(defn migrations-config [connection-url]
+  {:datastore  (ragtime.jdbc/sql-database connection-url)
+   :migrations (ragtime.jdbc/load-resources "migrations/magento")})
+
+(defn db-migrate []
+  (ragtime.repl/migrate (migrations-config test-db)))
+
+(defn db-rollback []
+  (ragtime.repl/rollback (migrations-config test-db)))
+
+(defn db-show-tables []
+  (clojento.magento.db/raw-jdbc-fetch (:db system) "show tables;"))

@@ -68,5 +68,12 @@
       (log/info  "fetching " stmt)
       (jdbc/fetch conn stmt))))
 
+(defn raw-jdbc-execute [db stmt-or-sqlvec]
+  (with-open [conn (jdbc/connection (:datasource db))]
+    (jdbc/execute conn stmt-or-sqlvec)))
+
+(defn raw-jdbc-fetch [db stmt-or-sqlvec]
+  (with-open [conn (jdbc/connection (:datasource db))]
+    (jdbc/fetch conn stmt-or-sqlvec)))
 
 ; TODO run_and_time_query

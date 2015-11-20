@@ -1,0 +1,11 @@
+DROP TABLE `enterprise_admin_passwords`;
+--;;
+DROP TABLE `adminnotification_inbox`;
+--;;
+DROP TABLE `admin_user`;
+--;;
+DROP TABLE `admin_rule`;
+--;;
+DROP TABLE `admin_role`;
+--;;
+DROP TABLE `admin_assert`;
