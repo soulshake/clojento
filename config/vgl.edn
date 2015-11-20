@@ -3,4 +3,5 @@
       :username      "root"
       :password      "123"
       :database-name "magento"
+      ; :database-name "magento-migrations"
       :read-only     true}}
