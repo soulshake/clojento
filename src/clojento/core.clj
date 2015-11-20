@@ -7,9 +7,6 @@
 
 (log/info "loading clojento.core namespace")
 
-;(defn example-system [_]
-;  {:host "dbhost.com" :port 123})
-
 (defn example-system [config-options]
   (let [{:keys [host port]} config-options]
     (component/system-map
@@ -17,12 +14,11 @@
      :db (component/using (magento-db/new-database) [:configurator])
      :magento (component/using (magento/map->Magento {}) [:db]))))
 
-(defn local-live-system [config-options]
- (let [{:keys [host port]} config-options]
-   (component/system-map
-    :configurator (config/new-configurator ["config/vgl.edn"])
-    :db (component/using (magento-db/new-database) [:configurator])
-    :magento (component/using (magento/map->Magento {}) [:db]))))
+(defn local-live-system []
+  (component/system-map
+   :configurator (config/new-configurator ["config/vgl.edn"])
+   :db (component/using (magento-db/new-database) [:configurator])
+   :magento (component/using (magento/map->Magento {}) [:db])))
 
 
 (defn base-system []
