@@ -59,3 +59,22 @@ CREATE TABLE `core_config_data` (
   PRIMARY KEY (`config_id`),
   UNIQUE KEY `UNQ_CORE_CONFIG_DATA_SCOPE_SCOPE_ID_PATH` (`scope`,`scope_id`,`path`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1674 DEFAULT CHARSET=utf8;
+
+--;;
+
+INSERT INTO `core_website` (`website_id`, `code`, `name`, `sort_order`, `default_group_id`, `is_default`, `is_staging`, `master_login`, `master_password`, `visibility`)
+VALUES
+	(0, 'admin', 'Admin', 0, 0, 0, 0, '', '', '');
+
+--;;
+
+INSERT INTO `core_store_group` (`group_id`, `website_id`, `name`, `root_category_id`, `default_store_id`)
+VALUES
+	(0, 0, 'Default', 0, 0);
+
+--;;
+
+INSERT INTO `core_store` (`store_id`, `code`, `website_id`, `group_id`, `name`, `sort_order`, `is_active`)
+VALUES
+	(0, 'admin', 0, 0, 'Admin', 0, 1),
+	(1, 'store_1', 1, 1, 'Store 1', 0, 1);
