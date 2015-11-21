@@ -47,7 +47,7 @@
 (defn asdf []
   (mage/load-product (:magento system) 806))
 
-(def test-db "jdbc:mysql://192.168.99.100:32776/mage2?user=root&password=123")
+(def test-db "jdbc:mysql://192.168.99.100:32776/magento-migrations?user=root&password=123")
 
 (defn migrations-config [connection-url]
   {:datastore  (ragtime.jdbc/sql-database connection-url)
