@@ -61,12 +61,6 @@
   [params]
   ())
 
-(defn run-query [db query-name params & {:keys [debug] :or {debug false}}]
-  (let [q (get (:queries db) query-name)
-        stmt (yq/sqlvec-raw (:split q) params)]
-    (log/info  "fetching " stmt)
-    (raw-jdbc-fetch db stmt :debug debug)))
-
 (defn raw-jdbc-execute [db stmt-or-sqlvec & {:keys [debug] :or {debug false}}]
   (with-open [conn (jdbc/connection (:datasource db))]
     (let [starttime (System/nanoTime)
@@ -87,4 +81,10 @@
                            :time (/ (- (System/nanoTime) starttime) 1e6)})
         result))))
 
-; TODO run_and_time_query
+; ------------------------------------------------------------------------------
+
+(defn run-query [db query-name params & {:keys [debug] :or {debug false}}]
+  (let [q (get (:queries db) query-name)
+        stmt (yq/sqlvec-raw (:split q) params)]
+    (log/info  "fetching " stmt)
+    (raw-jdbc-fetch db stmt :debug debug)))
