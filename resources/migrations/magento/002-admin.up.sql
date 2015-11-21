@@ -80,16 +80,3 @@ CREATE TABLE `adminnotification_inbox` (
   KEY `IDX_ADMINNOTIFICATION_INBOX_IS_READ` (`is_read`),
   KEY `IDX_ADMINNOTIFICATION_INBOX_IS_REMOVE` (`is_remove`)
 ) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8 COMMENT='Adminnotification Inbox';
-
---;;
-
-CREATE TABLE `enterprise_admin_passwords` (
-  `password_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Password Id',
-  `user_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'User Id',
-  `password_hash` varchar(100) DEFAULT NULL COMMENT 'Password Hash',
-  `expires` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Expires',
-  `last_updated` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Last Updated',
-  PRIMARY KEY (`password_id`),
-  KEY `IDX_ENTERPRISE_ADMIN_PASSWORDS_USER_ID` (`user_id`),
-  CONSTRAINT `FK_ENTERPRISE_ADMIN_PASSWORDS_USER_ID_ADMIN_USER_USER_ID` FOREIGN KEY (`user_id`) REFERENCES `admin_user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='Enterprise Admin Passwords';

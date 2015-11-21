@@ -1,5 +1,3 @@
-DROP TABLE IF EXISTS `enterprise_admin_passwords`;
---;;
 DROP TABLE IF EXISTS `adminnotification_inbox`;
 --;;
 DROP TABLE IF EXISTS `admin_user`;

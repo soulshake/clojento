@@ -1,7 +1,7 @@
-DROP TABLE `core_config_data`;
+DROP TABLE IF EXISTS `core_config_data`;
 --;;
-DROP TABLE `core_store`;
+DROP TABLE IF EXISTS `core_store`;
 --;;
-DROP TABLE `core_store_group`;
+DROP TABLE IF EXISTS `core_store_group`;
 --;;
-DROP TABLE `core_website`;
+DROP TABLE IF EXISTS `core_website`;

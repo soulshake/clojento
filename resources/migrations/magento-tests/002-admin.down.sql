@@ -1,11 +1,9 @@
-DROP TABLE `enterprise_admin_passwords`;
+DROP TABLE IF EXISTS `adminnotification_inbox`;
 --;;
-DROP TABLE `adminnotification_inbox`;
+DROP TABLE IF EXISTS `admin_user`;
 --;;
-DROP TABLE `admin_user`;
+DROP TABLE IF EXISTS `admin_rule`;
 --;;
-DROP TABLE `admin_rule`;
+DROP TABLE IF EXISTS `admin_role`;
 --;;
-DROP TABLE `admin_role`;
---;;
-DROP TABLE `admin_assert`;
+DROP TABLE IF EXISTS `admin_assert`;
