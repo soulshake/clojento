@@ -17,7 +17,7 @@
    :validation-timeout 5000
    :idle-timeout       600000
    :max-lifetime       1800000
-   :minimum-idle       10
+   :minimum-idle       2
    :maximum-pool-size  10
    :pool-name          "db-pool"
    :adapter            "mysql"})
