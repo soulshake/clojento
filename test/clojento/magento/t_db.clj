@@ -51,10 +51,9 @@
         (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check" :debug true)) => (contains {:stmt "SELECT 'passed' as check"}))
   (fact "meta contains :hits"
         (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check" :debug true)) => (contains {:hits 1}))
-  (fact "meta contains :time"
-        ; checking for 0.01 ms <= time <= 0.99 ms
-        (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check" :debug true)) => (contains {:time (roughly 0.5 0.49)})
-        (meta (raw-jdbc-execute (:db @system) "CREATE TABLE new_tbl;" :debug true)) => (contains {:time (roughly 0.5 0.49)}))
+  (fact "meta contains :time > 0"
+        (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check" :debug true)) => (contains {:time pos?})
+        (meta (raw-jdbc-execute (:db @system) "CREATE TABLE new_tbl;" :debug true))  => (contains {:time pos?}))
   (log/info "completed tests with in-memory DB"))
 
 
