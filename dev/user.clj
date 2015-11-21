@@ -54,10 +54,20 @@
    :migrations (ragtime.jdbc/load-resources "migrations/magento")})
 
 (defn db-migrate []
-  (ragtime.repl/migrate (migrations-config test-db)))
+  ; always returns nil
+  (ragtime.repl/migrate (migrations-config test-db))
+  :done)
 
 (defn db-rollback []
-  (ragtime.repl/rollback (migrations-config test-db)))
+  ; always returns nil
+  (ragtime.repl/rollback (migrations-config test-db))
+  :done)
+
+(defn db-rollback-all []
+  ; TODO count migration files instead of just doing this 10 times
+  ; or dig into ragtime to find out how to get a more usefull return value
+  (doall (take 10 (repeatedly db-rollback)))
+  :done)
 
 (defn db-show-tables []
   (clojento.magento.db/raw-jdbc-fetch (:db system) "show tables;"))
