@@ -67,7 +67,7 @@
           stmt (yq/sqlvec-raw (:split q) params)]
       (log/info  "fetching " stmt)
       (if debug
-        (with-meta (jdbc/fetch conn stmt))
+        (with-meta (jdbc/fetch conn stmt) {})
         (jdbc/fetch conn stmt)))))
 
 (defn raw-jdbc-execute [db stmt-or-sqlvec]
