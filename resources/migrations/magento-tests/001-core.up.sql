@@ -64,13 +64,15 @@ CREATE TABLE `core_config_data` (
 
 INSERT INTO `core_website` (`website_id`, `code`, `name`, `sort_order`, `default_group_id`, `is_default`, `is_staging`, `master_login`, `master_password`, `visibility`)
 VALUES
-	(0, 'admin', 'Admin', 0, 0, 0, 0, '', '', '');
+  (0, 'admin', 'Admin', 0, 0, 0, 0, '', '', ''),
+  (1, 'website_1', 'Website 1', 0, 1, 1, 0, '', '', '');
 
 --;;
 
 INSERT INTO `core_store_group` (`group_id`, `website_id`, `name`, `root_category_id`, `default_store_id`)
 VALUES
-	(0, 0, 'Default', 0, 0);
+  (0, 0, 'Default', 0, 0),
+  (1, 1, 'Store Group 1', 2, 1);
 
 --;;
 
