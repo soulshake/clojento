@@ -48,12 +48,18 @@
   (log/info "completed tests with in-memory DB"))
 
 
+(def write-query (str
+                  "INSERT INTO `core_website` (`website_id`, `code`, `name`, `sort_order`, `default_group_id`, `is_default`, `is_staging`, `master_login`, `master_password`, `visibility`) "
+                  "VALUES (0, 'admin', 'Admin', 0, 0, 0, 0, '', '', '');"))
+
 ; TODO wrap in (facts ...), possibly?
 (with-state-changes [(before :contents (reset! system (fresh-system prepare-test-db db-config-ro)))
                      (after  :contents (component/stop @system))]
   (log/info "starting tests with read-only DB")
   (fact "migration table exists"
         (raw-jdbc-fetch (:db @system) "show tables;") => (contains {:table_name "ragtime_migrations", :table_schema "public"}))
-  (fact "migration table exists"
+  (fact "store table exists"
         (raw-jdbc-fetch (:db @system) "show tables;") => (contains {:table_name "core_store", :table_schema "public"}))
+  (fact "make sure db is read-only"
+        (raw-jdbc-execute (:db @system) write-query) => (throws org.h2.jdbc.JdbcBatchUpdateException #"read only"))
   (log/info "completed tests with read-only DB"))
