@@ -62,4 +62,7 @@
         (raw-jdbc-fetch (:db @system) "show tables;") => (contains {:table_name "core_store", :table_schema "public"}))
   (fact "make sure db is read-only"
         (raw-jdbc-execute (:db @system) write-query) => (throws org.h2.jdbc.JdbcBatchUpdateException #"read only"))
+  (fact "db contains 2 websites (admin + 1) and 2 stores"
+        (count (raw-jdbc-fetch (:db @system) "select * from core_website;")) => 2
+        (count (raw-jdbc-fetch (:db @system) "select * from core_store;")) => 2)
   (log/info "completed tests with read-only DB"))
