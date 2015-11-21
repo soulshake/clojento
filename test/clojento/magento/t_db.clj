@@ -79,3 +79,28 @@
   (fact "meta contains :hits"
         (meta (raw-jdbc-fetch (:db @system) "SELECT * FROM core_website;"  :debug true)) => (contains {:hits 2}))
   (log/info "completed tests with read-only DB"))
+
+(facts "get-product-data"
+  (with-state-changes [(before :contents (reset! system (fresh-system prepare-test-db db-config-ro)))
+                       (after  :contents (component/stop @system))]
+    (log/info "starting tests with read-only DB")
+    (fact "returns found"
+          ; not found
+          (get-product-data (:db @system) -1) => (contains {:found false})
+          ; simple product
+          (get-product-data (:db @system) 1)  => (contains {:found true})
+          ; configurable product
+          (get-product-data (:db @system) 2)  => (contains {:found true})
+          ; variant (child product)
+          (get-product-data (:db @system) 3)  => (contains {:found true}))
+    (future-fact "returns is-product"
+          (get-product-data (:db @system) -1) => (contains {:is-product false})
+          (get-product-data (:db @system) 1)  => (contains {:is-product true})
+          (get-product-data (:db @system) 2)  => (contains {:is-product true})
+          (get-product-data (:db @system) 3)  => (contains {:is-product false}))
+    (future-fact "returns the product-id (when is a product)" ; TODO really ?
+          (get-product-data (:db @system) -1) => (contains {:product-id nil})
+          (get-product-data (:db @system) 1)  => (contains {:product-id 1})
+          (get-product-data (:db @system) 2)  => (contains {:product-id 2})
+          (get-product-data (:db @system) 3)  => (contains {:product-id nil}))
+    (log/info "completed tests with read-only DB")))

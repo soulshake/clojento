@@ -1,4 +1,7 @@
---;;
+-- required for mysql:
+-- (otherwise it will auto_increment ids that are 0)
+-- SET GLOBAL sql_mode='NO_AUTO_VALUE_ON_ZERO';
+
 
 INSERT INTO `core_website` (`website_id`, `code`, `name`, `sort_order`, `default_group_id`, `is_default`, `is_staging`, `master_login`, `master_password`, `visibility`)
 VALUES
@@ -54,3 +57,7 @@ VALUES
   (3, 4, 4, 'simple',       'sku-2.1', 0, 0, '2011-11-21 14:04:00', '2012-02-23 16:38:00', NULL, NULL),
   (4, 4, 4, 'simple',       'sku-2.2', 0, 0, '2011-11-21 14:04:01', '2012-02-23 16:38:01', NULL, NULL),
   (5, 4, 4, 'simple',       'sku-2.3', 0, 0, '2011-11-21 14:04:02', '2012-02-23 16:38:02', NULL, NULL);
+
+
+-- required for mysql:
+-- SET GLOBAL sql_mode='';

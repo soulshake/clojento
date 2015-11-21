@@ -88,3 +88,12 @@
         stmt (yq/sqlvec-raw (:split q) params)]
     (log/info  "fetching " stmt)
     (raw-jdbc-fetch db stmt :debug debug)))
+
+; ------------------------------------------------------------------------------
+
+(defn get-product-data [db product-id & {:keys [debug] :or {debug false}}]
+  (let [q-product-by-id (run-query db :product-by-id [product-id] :debug debug)
+        product-by-id (first q-product-by-id)]
+    (if (nil? product-by-id)
+      {:found false :is-product false :product-id nil}
+      {:found true  :is-product true  :product-id product-id})))
