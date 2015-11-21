@@ -69,16 +69,22 @@
 
 (defn raw-jdbc-execute [db stmt-or-sqlvec & {:keys [debug] :or {debug false}}]
   (with-open [conn (jdbc/connection (:datasource db))]
-    (let [result (jdbc/execute conn stmt-or-sqlvec)]
+    (let [starttime (System/nanoTime)
+          result (jdbc/execute conn stmt-or-sqlvec)]
       (if debug
-        (with-meta result {:stmt stmt-or-sqlvec :hits (count result)})
+        (with-meta result {:stmt stmt-or-sqlvec
+                           :hits (count result)
+                           :time (/ (- (System/nanoTime) starttime) 1e6)})
         result))))
 
 (defn raw-jdbc-fetch [db stmt-or-sqlvec & {:keys [debug] :or {debug false}}]
   (with-open [conn (jdbc/connection (:datasource db))]
-    (let [result (jdbc/fetch conn stmt-or-sqlvec)]
+    (let [starttime (System/nanoTime)
+          result (jdbc/fetch conn stmt-or-sqlvec)]
       (if debug
-        (with-meta result {:stmt stmt-or-sqlvec :hits (count result)})
+        (with-meta result {:stmt stmt-or-sqlvec
+                           :hits (count result)
+                           :time (/ (- (System/nanoTime) starttime) 1e6)})
         result))))
 
 ; TODO run_and_time_query

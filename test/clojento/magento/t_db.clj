@@ -47,10 +47,14 @@
         (meta (run-query (:db @system) :check [])) => nil
         (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check")) => nil
         (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check" :debug true)) =not=> nil)
-  (fact "meta contains stmt"
+  (fact "meta contains :stmt"
         (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check" :debug true)) => (contains {:stmt "SELECT 'passed' as check"}))
-  (fact "meta contains hits"
+  (fact "meta contains :hits"
         (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check" :debug true)) => (contains {:hits 1}))
+  (fact "meta contains :time"
+        ; checking for 0.01 ms <= time <= 0.99 ms
+        (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check" :debug true)) => (contains {:time (roughly 0.5 0.49)})
+        (meta (raw-jdbc-execute (:db @system) "CREATE TABLE new_tbl;" :debug true)) => (contains {:time (roughly 0.5 0.49)}))
   (log/info "completed tests with in-memory DB"))
 
 
@@ -73,6 +77,6 @@
         (count (raw-jdbc-fetch (:db @system) "SELECT * FROM core_store;")) => 2
         (count (run-query (:db @system) :websites [])) => 2
         (count (run-query (:db @system) :websites [] :debug true)) => 2)
-  (fact "meta contains hits"
+  (fact "meta contains :hits"
         (meta (raw-jdbc-fetch (:db @system) "SELECT * FROM core_website;"  :debug true)) => (contains {:hits 2}))
   (log/info "completed tests with read-only DB"))
