@@ -43,8 +43,14 @@
   (fact "db exists"
         (first (run-query (:db @system) :check [])) => {:check "passed"})
   (fact "meta on query result only when requested"
+        (meta (run-query (:db @system) :check [] :debug true)) =not=> nil
         (meta (run-query (:db @system) :check [])) => nil
-        (meta (run-query (:db @system) :check [] :debug true)) =not=> nil)
+        (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check")) => nil
+        (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check" :debug true)) =not=> nil)
+  (fact "meta contains stmt"
+        (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check" :debug true)) => (contains {:stmt "SELECT 'passed' as check"}))
+  (fact "meta contains hits"
+        (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check" :debug true)) => (contains {:hits 1}))
   (log/info "completed tests with in-memory DB"))
 
 
@@ -67,4 +73,6 @@
         (count (raw-jdbc-fetch (:db @system) "SELECT * FROM core_store;")) => 2
         (count (run-query (:db @system) :websites [])) => 2
         (count (run-query (:db @system) :websites [] :debug true)) => 2)
+  (fact "meta contains hits"
+        (meta (raw-jdbc-fetch (:db @system) "SELECT * FROM core_website;"  :debug true)) => (contains {:hits 2}))
   (log/info "completed tests with read-only DB"))

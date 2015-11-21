@@ -62,20 +62,23 @@
   ())
 
 (defn run-query [db query-name params & {:keys [debug] :or {debug false}}]
+  (let [q (get (:queries db) query-name)
+        stmt (yq/sqlvec-raw (:split q) params)]
+    (log/info  "fetching " stmt)
+    (raw-jdbc-fetch db stmt :debug debug)))
+
+(defn raw-jdbc-execute [db stmt-or-sqlvec & {:keys [debug] :or {debug false}}]
   (with-open [conn (jdbc/connection (:datasource db))]
-    (let [q (get (:queries db) query-name)
-          stmt (yq/sqlvec-raw (:split q) params)]
-      (log/info  "fetching " stmt)
+    (let [result (jdbc/execute conn stmt-or-sqlvec)]
       (if debug
-        (with-meta (jdbc/fetch conn stmt) {})
-        (jdbc/fetch conn stmt)))))
+        (with-meta result {:stmt stmt-or-sqlvec :hits (count result)})
+        result))))
 
-(defn raw-jdbc-execute [db stmt-or-sqlvec]
+(defn raw-jdbc-fetch [db stmt-or-sqlvec & {:keys [debug] :or {debug false}}]
   (with-open [conn (jdbc/connection (:datasource db))]
-    (jdbc/execute conn stmt-or-sqlvec)))
-
-(defn raw-jdbc-fetch [db stmt-or-sqlvec]
-  (with-open [conn (jdbc/connection (:datasource db))]
-    (jdbc/fetch conn stmt-or-sqlvec)))
+    (let [result (jdbc/fetch conn stmt-or-sqlvec)]
+      (if debug
+        (with-meta result {:stmt stmt-or-sqlvec :hits (count result)})
+        result))))
 
 ; TODO run_and_time_query
