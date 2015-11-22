@@ -2,10 +2,10 @@
   (:require [midje.sweet :refer :all]
             [clojento.magento.db :refer :all]
             [clojure.java.io :as io]
-            [com.stuartsierra.component :as component]
-            [taoensso.timbre :as log]))
+            [clojure.tools.logging :as log]
+            [com.stuartsierra.component :as component]))
 
-(log/info "loading clojento.magento.t_db namespace")
+(log/debug "loading clojento.magento.t_db namespace")
 
 (def test-db-rw "jdbc:h2:file:./data/test-db;MODE=MySQL")
 (def test-db-ro "jdbc:h2:file:./data/test-db;MODE=MySQL;ACCESS_MODE_DATA=r")

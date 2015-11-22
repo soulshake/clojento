@@ -1,11 +1,11 @@
 (ns clojento.core
-  (:require [taoensso.timbre :as log]
-            [com.stuartsierra.component :as component]
+  (:require [com.stuartsierra.component :as component]
             [clojento.config :as config]
             [clojento.magento :as magento]
-            [clojento.magento.db :as magento-db]))
+            [clojento.magento.db :as magento-db]
+            [clojure.tools.logging :as log]))
 
-(log/info "loading clojento.core namespace")
+(log/debug "loading clojento.core namespace")
 
 (defn example-system [config-options]
   (let [{:keys [host port]} config-options]

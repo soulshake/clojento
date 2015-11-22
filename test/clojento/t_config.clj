@@ -1,6 +1,9 @@
 (ns clojento.t_config
   (:require [midje.sweet :refer :all]
-            [clojento.config :refer :all]))
+            [clojento.config :refer :all]
+            [clojure.tools.logging :as log]))
+
+(log/debug "loading clojento.t_config namespace")
 
 (facts "reading config files"
   (fact "existing file"

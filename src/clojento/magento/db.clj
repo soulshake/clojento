@@ -1,12 +1,12 @@
 (ns clojento.magento.db
   (:require [com.stuartsierra.component :as component]
             [clojento.config :as config]
+            [clojure.tools.logging :as log]
             [hikari-cp.core :as hikari]
             [jdbc.core :as jdbc]
-            [taoensso.timbre :as log]
             [yesqueries.core :as yq]))
 
-(log/info "loading clojento.magento.db namespace")
+(log/debug "loading clojento.magento.db namespace")
 
 ; see https://github.com/tomekw/hikari-cp
 ; all time values are specified in milliseconds

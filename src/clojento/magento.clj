@@ -2,9 +2,9 @@
   (:require [com.stuartsierra.component :as component]
             [clojento.config :as config]
             [clojento.magento.db :as db]
-            [taoensso.timbre :as log]))
+            [clojure.tools.logging :as log]))
 
-(log/info "loading clojento.magento namespace")
+(log/debug "loading clojento.magento namespace")
 
 (defn load-state []
   (log/info "loading state")

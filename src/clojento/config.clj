@@ -1,9 +1,9 @@
 (ns clojento.config
   (:require [clojure.edn :as edn]
-            [com.stuartsierra.component :as component]
-            [taoensso.timbre :as log]))
+            [clojure.tools.logging :as log]
+            [com.stuartsierra.component :as component]))
 
-(log/info "loading clojento.config namespace")
+(log/debug "loading clojento.config namespace")
 
 ; see https://github.com/clojure-cookbook/clojure-cookbook/blob/master/04_local-io/4-15_edn-config.asciidoc
 
