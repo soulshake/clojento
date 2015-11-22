@@ -1,3 +1,4 @@
+<!-- can add scan="true" scanPeriod="30 seconds" to <configuation> -->
 <configuration>
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -8,7 +9,12 @@
     </encoder>
   </appender>
 
-  <root level="debug">
+<!--
+  <logger name="clojento" level="DEBUG"/>
+  <logger name="com.zaxxer.hikari" level="DEBUG"/>
+-->
+
+  <root level="DEBUG">
     <appender-ref ref="STDOUT" />
   </root>
 </configuration>
