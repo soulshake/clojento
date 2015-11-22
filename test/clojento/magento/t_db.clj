@@ -106,7 +106,7 @@
             (get-product-data (:db @system) 2)  => (contains {:found true})
             ; variant (child product)
             (get-product-data (:db @system) 3)  => (contains {:found true}))
-      (future-fact "is-product"
+      (fact "is-product"
                    (get-product-data (:db @system) -1) => (contains {:is-product false})
                    (get-product-data (:db @system) 1)  => (contains {:is-product true})
                    (get-product-data (:db @system) 2)  => (contains {:is-product true})
