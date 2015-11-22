@@ -111,7 +111,7 @@
                    (get-product-data (:db @system) 1)  => (contains {:is-product true})
                    (get-product-data (:db @system) 2)  => (contains {:is-product true})
                    (get-product-data (:db @system) 3)  => (contains {:is-product false}))
-      (future-fact "is-variant"
+      (fact "is-variant"
                    (get-product-data (:db @system) -1) => (contains {:is-variant false})
                    (get-product-data (:db @system) 1)  => (contains {:is-variant false})
                    (get-product-data (:db @system) 2)  => (contains {:is-variant false})
