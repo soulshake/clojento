@@ -86,18 +86,15 @@
 (defn run-query [db query-name params & {:keys [debug] :or {debug false}}]
   (let [q (get (:queries db) query-name)
         stmt (yq/sqlvec-raw (:split q) params)]
-    (log/info  "fetching " stmt)
+    (log/debug "fetching " stmt)
     (raw-jdbc-fetch db stmt :debug debug)))
 
 ; ------------------------------------------------------------------------------
 
 (defn get-variants-info [db query-id & {:keys [debug] :or {debug false}}]
   (let [q-result             (run-query db :variants [query-id query-id] :debug debug)
-        _                    (log/info (str "res " q-result))
         q-meta               (meta q-result)
-        _                    (log/info (str "meta " q-meta))
         grouped-by-parent    (group-by :product_id q-result)
-        _                    (log/info (str "grouped " grouped-by-parent))
         has-variants         (contains? grouped-by-parent query-id)
         product-with-variant (first q-result)]
     (if has-variants

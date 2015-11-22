@@ -12,7 +12,7 @@
     [(keyword (:name q)) (-> q (dissoc :name) (assoc :split split))]))
 
 (defn load-queries [filename]
-  (log/info  "loading queries from " filename)
+  (log/debug "loading queries from " filename)
   (let [queries (->> filename
                   slurp-from-classpath
                   parse-tagged-queries
@@ -20,11 +20,9 @@
                   (into {}))]
     queries))
 
-
-
 (defn sqlvec-raw
   [split-sql params]
-  (log/info  "sqlvec-raw " split-sql params)
+  (log/debug "sqlvec-raw " split-sql params)
   (reassemble-query split-sql params))
 
 ;(reassemble-query (split-at-parameters "SELECT age FROM users WHERE country = :country AND asdf = :country") ["gb"])
