@@ -18,6 +18,9 @@
   {:adapter  "h2"
    :url      (str "jdbc:h2:mem:" (gensym))})
 
+(def system (atom nil))
+
+; ------------------------------------------------------------------------------
 
 (defn prepare-test-db []
   (log/info "preparing read-only test DB")
@@ -32,9 +35,9 @@
                       :configurator (clojento.config/static-configurator {:db db-config}))]
       (component/start system)))
 
-(def system (atom nil))
-
 ; TODO review (namespace-state-changes)
+
+; ------------------------------------------------------------------------------
 
 ; TODO wrap in (facts ...), maybe?
 (with-state-changes [(before :facts (reset! system (fresh-system (fn []) db-config-in-memory)))
@@ -61,64 +64,64 @@
                   "INSERT INTO `core_website` (`website_id`, `code`, `name`, `sort_order`, `default_group_id`, `is_default`, `is_staging`, `master_login`, `master_password`, `visibility`) "
                   "VALUES (0, 'admin', 'Admin', 0, 0, 0, 0, '', '', '');"))
 
-; TODO wrap in (facts ...), possibly?
-(with-state-changes [(before :contents (reset! system (fresh-system prepare-test-db db-config-ro)))
-                     (after  :contents (component/stop @system))]
-  (log/info "starting tests with read-only DB")
-  (fact "migration table exists"
-        (raw-jdbc-fetch (:db @system) "SHOW TABLES;") => (contains {:table_name "ragtime_migrations", :table_schema "public"}))
-  (fact "store table exists"
-        (raw-jdbc-fetch (:db @system) "SHOW TABLES;") => (contains {:table_name "core_store", :table_schema "public"}))
-  (fact "make sure db is read-only"
-        (raw-jdbc-execute (:db @system) write-query) => (throws org.h2.jdbc.JdbcBatchUpdateException #"read only"))
-  (fact "db contains 2 websites (admin + 1) and 2 stores"
-        (count (raw-jdbc-fetch (:db @system) "SELECT * FROM core_website;")) => 2
-        (count (raw-jdbc-fetch (:db @system) "SELECT * FROM core_store;")) => 2
-        (count (run-query (:db @system) :websites [])) => 2
-        (count (run-query (:db @system) :websites [] :debug true)) => 2)
-  (fact "meta contains :hits"
-        (meta (raw-jdbc-fetch (:db @system) "SELECT * FROM core_website;"  :debug true)) => (contains {:hits 2}))
-  (log/info "completed tests with read-only DB"))
-
-(facts "get-product-data and related"
+(facts "with read-only database"
   (with-state-changes [(before :contents (reset! system (fresh-system prepare-test-db db-config-ro)))
                        (after  :contents (component/stop @system))]
     (log/info "starting tests with read-only DB")
 
-    (fact "get-variants-info"
-          ; not found
-          (get-variants-info (:db @system) -1) => {:has-variants false :is-variant false}
-          ; simple product
-          (get-variants-info (:db @system) 1)  => {:has-variants false :is-variant false}
-          ; configurable product
-          (get-variants-info (:db @system) 2)  => {:has-variants true  :is-variant false :variant-ids [3 4 5]}
-          ; variant (child product)
-          (get-variants-info (:db @system) 3)  => {:has-variants false :is-variant true  :product-id 2}
-          ; has meta
-          (meta (get-variants-info (:db @system) -1 :debug true)) => (contains {:hits 0}))
+    (facts "db and migrations"
+      (fact "migration table exists"
+            (raw-jdbc-fetch (:db @system) "SHOW TABLES;") => (contains {:table_name "ragtime_migrations", :table_schema "public"}))
+      (fact "store table exists"
+            (raw-jdbc-fetch (:db @system) "SHOW TABLES;") => (contains {:table_name "core_store", :table_schema "public"}))
+      (fact "make sure db is read-only"
+            (raw-jdbc-execute (:db @system) write-query) => (throws org.h2.jdbc.JdbcBatchUpdateException #"read only"))
+      (fact "db contains 2 websites (admin + 1) and 2 stores"
+            (count (raw-jdbc-fetch (:db @system) "SELECT * FROM core_website;")) => 2
+            (count (raw-jdbc-fetch (:db @system) "SELECT * FROM core_store;")) => 2
+            (count (run-query (:db @system) :websites [])) => 2
+            (count (run-query (:db @system) :websites [] :debug true)) => 2)
+      (fact "meta contains :hits"
+            (meta (raw-jdbc-fetch (:db @system) "SELECT * FROM core_website;"  :debug true)) => (contains {:hits 2})))
 
-    (fact "get-product-data returns found"
-          ; not found
-          (get-product-data (:db @system) -1) => (contains {:found false})
-          ; simple product
-          (get-product-data (:db @system) 1)  => (contains {:found true})
-          ; configurable product
-          (get-product-data (:db @system) 2)  => (contains {:found true})
-          ; variant (child product)
-          (get-product-data (:db @system) 3)  => (contains {:found true}))
-    (future-fact "returns is-product"
-                 (get-product-data (:db @system) -1) => (contains {:is-product false})
-                 (get-product-data (:db @system) 1)  => (contains {:is-product true})
-                 (get-product-data (:db @system) 2)  => (contains {:is-product true})
-                 (get-product-data (:db @system) 3)  => (contains {:is-product false}))
-    (future-fact "returns is-variant"
-                 (get-product-data (:db @system) -1) => (contains {:is-variant false})
-                 (get-product-data (:db @system) 1)  => (contains {:is-variant false})
-                 (get-product-data (:db @system) 2)  => (contains {:is-variant false})
-                 (get-product-data (:db @system) 3)  => (contains {:is-variant true}))
-    (future-fact "returns the product-id (id of the parent for variants)"
-                 (get-product-data (:db @system) -1) => (contains {:product-id nil})
-                 (get-product-data (:db @system) 1)  => (contains {:product-id 1})
-                 (get-product-data (:db @system) 2)  => (contains {:product-id 2})
-                 (get-product-data (:db @system) 3)  => (contains {:product-id 2}))
+    (facts "get-variants-info"
+      (fact "not found"
+            (get-variants-info (:db @system) -1) => {:has-variants false :is-variant false})
+      (fact "simple product"
+            (get-variants-info (:db @system) 1)  => {:has-variants false :is-variant false})
+      (fact "configurable product"
+            (get-variants-info (:db @system) 2)  => {:has-variants true  :is-variant false :variant-ids [3 4 5]})
+      (fact "variant (child product)"
+            (get-variants-info (:db @system) 3)  => {:has-variants false :is-variant true  :product-id 2})
+      (fact "has meta"
+            (meta (get-variants-info (:db @system) -1 :debug true)) => (contains {:hits 0})))
+
+    (facts "get-product-data"
+      (fact "found"
+            ; not found
+            (get-product-data (:db @system) -1) => (contains {:found false})
+            ; simple product
+            (get-product-data (:db @system) 1)  => (contains {:found true})
+            ; configurable product
+            (get-product-data (:db @system) 2)  => (contains {:found true})
+            ; variant (child product)
+            (get-product-data (:db @system) 3)  => (contains {:found true}))
+      (future-fact "is-product"
+                   (get-product-data (:db @system) -1) => (contains {:is-product false})
+                   (get-product-data (:db @system) 1)  => (contains {:is-product true})
+                   (get-product-data (:db @system) 2)  => (contains {:is-product true})
+                   (get-product-data (:db @system) 3)  => (contains {:is-product false}))
+      (future-fact "is-variant"
+                   (get-product-data (:db @system) -1) => (contains {:is-variant false})
+                   (get-product-data (:db @system) 1)  => (contains {:is-variant false})
+                   (get-product-data (:db @system) 2)  => (contains {:is-variant false})
+                   (get-product-data (:db @system) 3)  => (contains {:is-variant true}))
+      (future-fact "product-id (id of the parent for variants)"
+                   (get-product-data (:db @system) -1) => (contains {:product-id nil})
+                   (get-product-data (:db @system) 1)  => (contains {:product-id 1})
+                   (get-product-data (:db @system) 2)  => (contains {:product-id 2})
+                   (get-product-data (:db @system) 3)  => (contains {:product-id 2}))
+      (future-fact "has meta"
+            (meta (get-product-data (:db @system) -1 :debug true)) =not=> nil?))
+
     (log/info "completed tests with read-only DB")))
