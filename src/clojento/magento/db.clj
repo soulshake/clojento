@@ -91,9 +91,27 @@
 
 ; ------------------------------------------------------------------------------
 
-(defn get-product-data [db product-id & {:keys [debug] :or {debug false}}]
-  (let [q-product-by-id (run-query db :product-by-id [product-id] :debug debug)
+(defn get-variants-info [db query-id & {:keys [debug] :or {debug false}}]
+  (let [q-result             (run-query db :variants [query-id query-id] :debug debug)
+        _                    (log/info (str "res " q-result))
+        q-meta               (meta q-result)
+        _                    (log/info (str "meta " q-meta))
+        grouped-by-parent    (group-by :product_id q-result)
+        _                    (log/info (str "grouped " grouped-by-parent))
+        has-variants         (contains? grouped-by-parent query-id)
+        product-with-variant (first q-result)]
+    (if has-variants
+      (with-meta {:is-variant false :has-variants true :variant-ids (map :variant_id (get grouped-by-parent query-id))} q-meta)
+      (if (nil? product-with-variant)
+        (with-meta {:is-variant false :has-variants false} q-meta)
+        (with-meta {:is-variant true :has-variants false :product-id (:product_id product-with-variant)} q-meta)))))
+
+
+; ------------------------------------------------------------------------------
+
+(defn get-product-data [db query-id & {:keys [debug] :or {debug false}}]
+  (let [q-product-by-id (run-query db :product-by-id [query-id] :debug debug)
         product-by-id (first q-product-by-id)]
     (if (nil? product-by-id)
       {:found false :is-product false :product-id nil}
-      {:found true  :is-product true  :product-id product-id})))
+      {:found true  :is-product true  :product-id query-id})))

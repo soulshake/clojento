@@ -1,3 +1,5 @@
+DELETE FROM `catalog_product_super_link`;
+--;;
 DELETE FROM `catalog_product_entity`;
 --;;
 DELETE FROM `eav_attribute_set`;

@@ -59,5 +59,11 @@ VALUES
   (5, 4, 4, 'simple',       'sku-2.3', 0, 0, '2011-11-21 14:04:02', '2012-02-23 16:38:02', NULL, NULL);
 
 
+INSERT INTO `catalog_product_super_link` (`product_id`, `parent_id`)
+VALUES
+	(3, 2),
+	(4, 2),
+	(5, 2);
+
 -- required for mysql:
 -- SET GLOBAL sql_mode='';

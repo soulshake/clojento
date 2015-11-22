@@ -80,11 +80,24 @@
         (meta (raw-jdbc-fetch (:db @system) "SELECT * FROM core_website;"  :debug true)) => (contains {:hits 2}))
   (log/info "completed tests with read-only DB"))
 
-(facts "get-product-data"
+(facts "get-product-data and related"
   (with-state-changes [(before :contents (reset! system (fresh-system prepare-test-db db-config-ro)))
                        (after  :contents (component/stop @system))]
     (log/info "starting tests with read-only DB")
-    (fact "returns found"
+
+    (fact "get-variants-info"
+          ; not found
+          (get-variants-info (:db @system) -1) => {:has-variants false :is-variant false}
+          ; simple product
+          (get-variants-info (:db @system) 1)  => {:has-variants false :is-variant false}
+          ; configurable product
+          (get-variants-info (:db @system) 2)  => {:has-variants true  :is-variant false :variant-ids [3 4 5]}
+          ; variant (child product)
+          (get-variants-info (:db @system) 3)  => {:has-variants false :is-variant true  :product-id 2}
+          ; has meta
+          (meta (get-variants-info (:db @system) -1 :debug true)) => (contains {:hits 0}))
+
+    (fact "get-product-data returns found"
           ; not found
           (get-product-data (:db @system) -1) => (contains {:found false})
           ; simple product
@@ -94,13 +107,18 @@
           ; variant (child product)
           (get-product-data (:db @system) 3)  => (contains {:found true}))
     (future-fact "returns is-product"
-          (get-product-data (:db @system) -1) => (contains {:is-product false})
-          (get-product-data (:db @system) 1)  => (contains {:is-product true})
-          (get-product-data (:db @system) 2)  => (contains {:is-product true})
-          (get-product-data (:db @system) 3)  => (contains {:is-product false}))
-    (future-fact "returns the product-id (when is a product)" ; TODO really ?
-          (get-product-data (:db @system) -1) => (contains {:product-id nil})
-          (get-product-data (:db @system) 1)  => (contains {:product-id 1})
-          (get-product-data (:db @system) 2)  => (contains {:product-id 2})
-          (get-product-data (:db @system) 3)  => (contains {:product-id nil}))
+                 (get-product-data (:db @system) -1) => (contains {:is-product false})
+                 (get-product-data (:db @system) 1)  => (contains {:is-product true})
+                 (get-product-data (:db @system) 2)  => (contains {:is-product true})
+                 (get-product-data (:db @system) 3)  => (contains {:is-product false}))
+    (future-fact "returns is-variant"
+                 (get-product-data (:db @system) -1) => (contains {:is-variant false})
+                 (get-product-data (:db @system) 1)  => (contains {:is-variant false})
+                 (get-product-data (:db @system) 2)  => (contains {:is-variant false})
+                 (get-product-data (:db @system) 3)  => (contains {:is-variant true}))
+    (future-fact "returns the product-id (id of the parent for variants)"
+                 (get-product-data (:db @system) -1) => (contains {:product-id nil})
+                 (get-product-data (:db @system) 1)  => (contains {:product-id 1})
+                 (get-product-data (:db @system) 2)  => (contains {:product-id 2})
+                 (get-product-data (:db @system) 3)  => (contains {:product-id 2}))
     (log/info "completed tests with read-only DB")))

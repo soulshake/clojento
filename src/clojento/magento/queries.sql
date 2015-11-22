@@ -33,11 +33,10 @@ WHERE p.entity_id = :product_id OR l.parent_id = :product_id
 ORDER BY l.product_id;
 
 -- name: variants
--- find variants of product or if product is a variant (lookup by parent id or child id)
-SELECT l.parent_id as parent_id, l.product_id as child_id, p.sku as child_sku, p.updated_at as child_updated_at
+-- find variants of product or if product is a variant (lookup by product id or variant id)
+SELECT l.parent_id as product_id, l.product_id as variant_id
 FROM catalog_product_super_link l
-LEFT JOIN catalog_product_entity p ON l.product_id = p.entity_id
-WHERE l.parent_id = :product_id OR l.product_id = :product_id
+WHERE l.parent_id = :product_id OR l.product_id = :variant_id
 
 -- name: product-websites
 -- no comment
