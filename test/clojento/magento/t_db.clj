@@ -124,7 +124,9 @@
       (fact "has meta"
             (meta (get-product-data (:db @system) -1 :debug true)) =not=> nil?)
       (fact "meta contains total time"
-            (meta (get-product-data (:db @system) -1 :debug true)) => (contains {:total-time pos?})))
+            (meta (get-product-data (:db @system) -1 :debug true)) => (contains {:total-time pos?}))
+      (fact "meta contains all queries"
+            (count (:queries (meta (get-product-data (:db @system) -1 :debug true)))) => 2))
 
     (log/info "completed tests with read-only DB")))
 
