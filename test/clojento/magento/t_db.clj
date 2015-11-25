@@ -121,7 +121,18 @@
                    (get-product-data (:db @system) 1)  => (contains {:product-id 1})
                    (get-product-data (:db @system) 2)  => (contains {:product-id 2})
                    (get-product-data (:db @system) 3)  => (contains {:product-id 2}))
-      (future-fact "has meta"
-            (meta (get-product-data (:db @system) -1 :debug true)) =not=> nil?))
+      (fact "has meta"
+            (meta (get-product-data (:db @system) -1 :debug true)) =not=> nil?)
+      (fact "meta contains total time"
+            (meta (get-product-data (:db @system) -1 :debug true)) => (contains {:total-time pos?})))
 
     (log/info "completed tests with read-only DB")))
+
+(facts "combine-queries-meta"
+  (let [queries [(with-meta {} {:a 1 :time 2})
+                 (with-meta {} {:b 3 :time 4})]]
+    (fact "assign queries meta to :queries'"
+          (combine-queries-meta queries) => (contains {:queries [{:a 1 :time 2} {:b 3 :time 4}]}))
+    (fact "sum(query-time) => time"
+          (combine-queries-meta queries) => (contains {:time 6})
+          (combine-queries-meta [(with-meta {} {:time 1}) (with-meta {} {:time 2})]) => (contains {:time 3}))))

@@ -103,16 +103,25 @@
         (with-meta {:is-variant false :has-variants false} q-meta)
         (with-meta {:is-variant true :has-variants false :product-id (:product_id product-with-variant)} q-meta)))))
 
+; ------------------------------------------------------------------------------
+
+(defn combine-queries-meta [queries]
+  (let [queries-meta (map meta queries)]
+    {:queries queries-meta :time (reduce + (map :time queries-meta))}))
 
 ; ------------------------------------------------------------------------------
 
 (defn get-product-data [db query-id & {:keys [debug] :or {debug false}}]
-  (let [q-variants-info (get-variants-info db query-id :debug debug)
+  (let [starttime       (System/nanoTime)
+        q-variants-info (get-variants-info db query-id :debug debug)
         is-variant      (:is-variant q-variants-info)
         q-product-by-id (run-query db :product-by-id [query-id] :debug debug)
         product-by-id   (first q-product-by-id)
         found           (not (nil? product-by-id))
-        is-product      (and found (not is-variant))]
-    (if (nil? product-by-id)
-      {:found false :is-variant is-variant :is-product is-product :product-id nil}
-      {:found true  :is-variant is-variant :is-product is-product :product-id query-id})))
+        is-product      (and found (not is-variant))
+        result          (if (nil? product-by-id)
+                          {:found false :is-variant is-variant :is-product is-product :product-id nil}
+                          {:found true  :is-variant is-variant :is-product is-product :product-id query-id})]
+    (if debug
+      (with-meta result (assoc (combine-queries-meta [q-variants-info q-product-by-id]) :total-time (/ (- (System/nanoTime) starttime) 1e6)) )
+      result)))
