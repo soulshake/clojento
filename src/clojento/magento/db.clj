@@ -115,13 +115,14 @@
   (let [starttime       (System/nanoTime)
         q-variants-info (get-variants-info db query-id :debug debug)
         is-variant      (:is-variant q-variants-info)
+        product-id      (if is-variant (:product-id q-variants-info) query-id)
         q-product-by-id (run-query db :product-by-id [query-id] :debug debug)
         product-by-id   (first q-product-by-id)
         found           (not (nil? product-by-id))
         is-product      (and found (not is-variant))
         result          (if (nil? product-by-id)
-                          {:found false :is-variant is-variant :is-product is-product :product-id nil}
-                          {:found true  :is-variant is-variant :is-product is-product :product-id query-id})]
+                          {:found found :is-variant is-variant :is-product is-product :product-id nil}
+                          {:found found :is-variant is-variant :is-product is-product :product-id product-id})]
     (if debug
       (with-meta result (assoc (combine-queries-meta [q-variants-info q-product-by-id]) :total-time (/ (- (System/nanoTime) starttime) 1e6)) )
       result)))

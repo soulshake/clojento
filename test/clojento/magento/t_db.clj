@@ -116,7 +116,7 @@
                    (get-product-data (:db @system) 1)  => (contains {:is-variant false})
                    (get-product-data (:db @system) 2)  => (contains {:is-variant false})
                    (get-product-data (:db @system) 3)  => (contains {:is-variant true}))
-      (future-fact "product-id (id of the parent for variants)"
+      (fact "product-id (id of the parent for variants)"
                    (get-product-data (:db @system) -1) => (contains {:product-id nil})
                    (get-product-data (:db @system) 1)  => (contains {:product-id 1})
                    (get-product-data (:db @system) 2)  => (contains {:product-id 2})
