@@ -143,6 +143,11 @@
             (get-product-data (:db @system) 2)  =>     (contains {:variants anything})
             (get-product-data (:db @system) 3)  =not=> (contains {:variants anything})
             (get-product-data (:db @system) 2)  =>     (contains {:variants []}))
+      (fact "entity-ids"
+            (meta (get-product-data (:db @system) -1 :debug true)) => (contains {:entity-ids [-1]})
+            (meta (get-product-data (:db @system)  1 :debug true)) => (contains {:entity-ids [1]})
+            (meta (get-product-data (:db @system)  2 :debug true)) => (contains {:entity-ids [2 3 4 5]})
+            (meta (get-product-data (:db @system)  3 :debug true)) => (contains {:entity-ids [3]}))
       (future-fact "type"
                    (get-product-data (:db @system) -1) =not=> (contains {:type anything})
                    (get-product-data (:db @system) 1)  => (contains {:type "simple"})

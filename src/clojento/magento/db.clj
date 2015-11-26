@@ -116,6 +116,7 @@
         q-variants-info (get-variants-info db query-id :debug debug)
         is-variant      (:is-variant q-variants-info)
         product-id      (if is-variant (:product-id q-variants-info) query-id)
+        entity-ids      (cons query-id (:variant-ids q-variants-info))
         q-product-by-id (run-query db :product-by-id [query-id] :debug debug)
         product-by-id   (first q-product-by-id)
         found           (not (nil? product-by-id))
@@ -128,5 +129,5 @@
                           basic-result)
         result          with-variants]
     (if debug
-      (with-meta result (assoc (combine-queries-meta [q-variants-info q-product-by-id]) :total-time (/ (- (System/nanoTime) starttime) 1e6)) )
+      (with-meta result (assoc (combine-queries-meta [q-variants-info q-product-by-id]) :entity-ids entity-ids :total-time (/ (- (System/nanoTime) starttime) 1e6)) )
       result)))
