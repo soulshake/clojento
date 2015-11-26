@@ -105,32 +105,39 @@
             ; configurable product
             (get-product-data (:db @system) 2)  => (contains {:found true})
             ; variant (child product)
-            (get-product-data (:db @system) 3)  => (contains {:found true}))
+            (get-product-data (:db @system) 3)  => (contains {:found true})
+            ; configurable product (no children)
+            (get-product-data (:db @system) 6)  => (contains {:found true}))
       (fact "is-product"
             (get-product-data (:db @system) -1) => (contains {:is-product false})
             (get-product-data (:db @system) 1)  => (contains {:is-product true})
             (get-product-data (:db @system) 2)  => (contains {:is-product true})
-            (get-product-data (:db @system) 3)  => (contains {:is-product false}))
+            (get-product-data (:db @system) 3)  => (contains {:is-product false})
+            (get-product-data (:db @system) 6)  => (contains {:is-product true}))
       (fact "is-variant"
             (get-product-data (:db @system) -1) => (contains {:is-variant false})
             (get-product-data (:db @system) 1)  => (contains {:is-variant false})
             (get-product-data (:db @system) 2)  => (contains {:is-variant false})
-            (get-product-data (:db @system) 3)  => (contains {:is-variant true}))
+            (get-product-data (:db @system) 3)  => (contains {:is-variant true})
+            (get-product-data (:db @system) 6)  => (contains {:is-variant false}))
       (fact "product-id (id of the parent for variants)"
             (get-product-data (:db @system) -1) => (contains {:product-id nil})
             (get-product-data (:db @system) 1)  => (contains {:product-id 1})
             (get-product-data (:db @system) 2)  => (contains {:product-id 2})
-            (get-product-data (:db @system) 3)  => (contains {:product-id 2})) ; product-id == parent-id
+            (get-product-data (:db @system) 3)  => (contains {:product-id 2}) ; product-id == parent-id
+            (get-product-data (:db @system) 6)  => (contains {:product-id 6}))
       (fact "variants"
             (get-product-data (:db @system) -1) =not=> (contains {:variants anything})
             (get-product-data (:db @system) 1)  =not=> (contains {:variants anything})
             (get-product-data (:db @system) 2)  =>     (contains {:variants anything})
-            (get-product-data (:db @system) 3)  =not=> (contains {:variants anything}))
+            (get-product-data (:db @system) 3)  =not=> (contains {:variants anything})
+            (get-product-data (:db @system) 2)  =>     (contains {:variants []}))
       (future-fact "sku"
             (get-product-data (:db @system) -1) => (contains {:sku nil})
             (get-product-data (:db @system) 1)  => (contains {:sku "sku-1"})
             (get-product-data (:db @system) 2)  => (contains {:sku "sku-2"})
-            (get-product-data (:db @system) 3)  => (contains {:sku "sku-2.1"}))
+            (get-product-data (:db @system) 3)  => (contains {:sku "sku-2.1"})
+            (get-product-data (:db @system) 6)  => (contains {:sku "sku-6"}))
       (fact "has meta"
             (meta (get-product-data (:db @system) -1 :debug true)) =not=> nil?)
       (fact "meta contains total time"
