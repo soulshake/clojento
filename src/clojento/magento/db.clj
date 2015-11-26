@@ -118,12 +118,14 @@
         product-id         (if is-variant (:product-id q-variants-info) query-id)
         entity-ids         (cons query-id (:variant-ids q-variants-info))
         q-product-entities (run-query db :product-entities [entity-ids] :debug debug)
+        product-entities   (group-by :id q-product-entities) ; map (first) on values
         product-by-id      (first q-product-entities)
         found              (not (nil? product-by-id))
         is-product         (and found (not is-variant))
-        basic-result      (if (nil? product-by-id)
-                            {:found found :is-variant is-variant :is-product is-product :product-id nil}
-                            {:found found :is-variant is-variant :is-product is-product :product-id product-id})
+        basic-result      (if found
+                            (merge {:found true :is-variant is-variant :is-product is-product :product-id product-id}
+                                   (first (get product-entities query-id)))
+                            {:found false :is-variant is-variant :is-product is-product :product-id nil})
         with-variants     (if (:has-variants q-variants-info)
                             (assoc basic-result :variants [])
                             basic-result)
