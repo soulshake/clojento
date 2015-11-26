@@ -12,25 +12,11 @@ FROM core_website
 SELECT store_id as id, code
 FROM core_store
 
--- name: product-by-id
--- no comment
-SELECT *
-FROM catalog_product_entity
-WHERE entity_id = :product_id
-
 -- name: all-product-ids
 -- no comment (TODO what about bundles? TODO maybe use catalog_product_super_link table)
 SELECT entity_id
 FROM catalog_product_entity      p
 JOIN catalog_product_entity_int  pv ON pv.entity_id = p.entity_id AND pv.attribute_id = :visibility_attribute_id AND pv.store_id = 0 AND pv.value > 1
-
--- name: product-and-variants-by-id
--- no comment
-SELECT p.*, l.parent_id as parent_id, l.product_id as child_id
-FROM catalog_product_entity p
-LEFT OUTER JOIN catalog_product_super_link l ON l.product_id = p.entity_id
-WHERE p.entity_id = :product_id OR l.parent_id = :product_id
-ORDER BY l.product_id;
 
 -- name: variants
 -- find variants of product or if product is a variant (lookup by product id or variant id)
