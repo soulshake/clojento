@@ -132,16 +132,22 @@
             (get-product-data (:db @system) 2)  =>     (contains {:variants anything})
             (get-product-data (:db @system) 3)  =not=> (contains {:variants anything})
             (get-product-data (:db @system) 2)  =>     (contains {:variants []}))
+      (future-fact "type"
+                   (get-product-data (:db @system) -1) =not=> (contains {:type anything})
+                   (get-product-data (:db @system) 1)  => (contains {:type "simple"})
+                   (get-product-data (:db @system) 2)  => (contains {:type "configurable"})
+                   (get-product-data (:db @system) 3)  => (contains {:type "simple"})
+                   (get-product-data (:db @system) 2)  => (contains {:type "configurable"}))
       (future-fact "sku"
-            (get-product-data (:db @system) -1) => (contains {:sku nil})
-            (get-product-data (:db @system) 1)  => (contains {:sku "sku-1"})
-            (get-product-data (:db @system) 2)  => (contains {:sku "sku-2"})
-            (get-product-data (:db @system) 3)  => (contains {:sku "sku-2.1"})
-            (get-product-data (:db @system) 6)  => (contains {:sku "sku-6"}))
+                   (get-product-data (:db @system) -1) =not=> (contains {:sku anything})
+                   (get-product-data (:db @system) 1)  => (contains {:sku "sku-1"})
+                   (get-product-data (:db @system) 2)  => (contains {:sku "sku-2"})
+                   (get-product-data (:db @system) 3)  => (contains {:sku "sku-2.1"})
+                   (get-product-data (:db @system) 6)  => (contains {:sku "sku-6"}))
       (fact "has meta"
             (meta (get-product-data (:db @system) -1 :debug true)) =not=> nil?)
-      (fact "meta contains total time"
-            (meta (get-product-data (:db @system) -1 :debug true)) => (contains {:total-time pos?}))
+      (fact "meta contains time and total time"
+            (meta (get-product-data (:db @system) -1 :debug true)) => (contains {:time pos? :total-time pos?}))
       (fact "meta contains all queries"
             (count (:queries (meta (get-product-data (:db @system) -1 :debug true)))) => 2))
 
