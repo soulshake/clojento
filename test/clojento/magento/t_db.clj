@@ -84,6 +84,17 @@
       (fact "meta contains :hits"
             (meta (raw-jdbc-fetch (:db @system) "SELECT * FROM core_website;"  :debug true)) => (contains {:hits 2})))
 
+    (facts "query: product-entities"
+      (fact "get missing product(s)"
+            (run-query (:db @system) :product-entities [-1]) => []
+            (run-query (:db @system) :product-entities [[-1 -2]]) => [])
+      (fact "get product with id 1 (as simple param or list)"
+            (first (run-query (:db @system) :product-entities [ 1 ])) => (contains {:id 1 :sku "sku-1" :type "simple" :attribute_set 4 :date-created anything :date-updated anything})
+            (first (run-query (:db @system) :product-entities [[1]])) => (contains {:id 1 :sku "sku-1" :type "simple" :attribute_set 4 :date-created anything :date-updated anything}))
+      (fact "get multiple products"
+            (run-query (:db @system) :product-entities [[1 2]])   => (contains (contains {:id 1})(contains {:id 2}))
+            (run-query (:db @system) :product-entities [[3 2 1]]) => (contains (contains {:id 1})(contains {:id 2}))))
+
     (facts "get-variants-info"
       (fact "not found"
             (get-variants-info (:db @system) -1) => {:has-variants false :is-variant false})

@@ -38,6 +38,18 @@ SELECT l.parent_id as product_id, l.product_id as variant_id
 FROM catalog_product_super_link l
 WHERE l.parent_id = :product_id OR l.product_id = :variant_id
 
+-- name: product-entities
+-- no comment
+SELECT
+  entity_id as id,
+  sku as sku,
+  created_at as `date-created`,
+  updated_at as `date-updated`,
+  type_id as type,
+  attribute_set_id as `attribute_set`
+FROM catalog_product_entity
+WHERE entity_type_id = 4 and entity_id IN (:product_ids)
+
 -- name: product-websites
 -- no comment
 SELECT * FROM catalog_product_website WHERE product_id IN (:product_ids)
