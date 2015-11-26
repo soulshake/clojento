@@ -22,12 +22,18 @@
 
 ; ------------------------------------------------------------------------------
 
+(defn migration-reporter [op id]
+  (case op
+    :up   (log/debug "Applying" id)
+    :down (log/debug "Rolling back" id)))
+
 (defn prepare-test-db []
   (log/info "preparing read-only test DB")
   (io/delete-file "./data/test-db.mv.db" true)
   (io/delete-file "./data/test-db.trace.db" true)
   (ragtime.repl/migrate {:datastore  (ragtime.jdbc/sql-database test-db-rw)
-                         :migrations (ragtime.jdbc/load-resources "migrations/magento-tests")}))
+                         :migrations (ragtime.jdbc/load-resources "migrations/magento-tests")
+                         :reporter   migration-reporter}))
 
 (defn fresh-system [before-start db-config]
   (before-start)
