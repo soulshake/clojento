@@ -121,6 +121,16 @@
             (get-product-data (:db @system) 1)  => (contains {:product-id 1})
             (get-product-data (:db @system) 2)  => (contains {:product-id 2})
             (get-product-data (:db @system) 3)  => (contains {:product-id 2})) ; product-id == parent-id
+      (fact "variants"
+            (get-product-data (:db @system) -1) =not=> (contains {:variants anything})
+            (get-product-data (:db @system) 1)  =not=> (contains {:variants anything})
+            (get-product-data (:db @system) 2)  =>     (contains {:variants anything})
+            (get-product-data (:db @system) 3)  =not=> (contains {:variants anything}))
+      (future-fact "sku"
+            (get-product-data (:db @system) -1) => (contains {:sku nil})
+            (get-product-data (:db @system) 1)  => (contains {:sku "sku-1"})
+            (get-product-data (:db @system) 2)  => (contains {:sku "sku-2"})
+            (get-product-data (:db @system) 3)  => (contains {:sku "sku-2.1"}))
       (fact "has meta"
             (meta (get-product-data (:db @system) -1 :debug true)) =not=> nil?)
       (fact "meta contains total time"

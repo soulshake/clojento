@@ -120,9 +120,13 @@
         product-by-id   (first q-product-by-id)
         found           (not (nil? product-by-id))
         is-product      (and found (not is-variant))
-        result          (if (nil? product-by-id)
+        basic-result    (if (nil? product-by-id)
                           {:found found :is-variant is-variant :is-product is-product :product-id nil}
-                          {:found found :is-variant is-variant :is-product is-product :product-id product-id})]
+                          {:found found :is-variant is-variant :is-product is-product :product-id product-id})
+        with-variants   (if (:has-variants q-variants-info)
+                          (assoc basic-result :variants [])
+                          basic-result)
+        result          with-variants]
     (if debug
       (with-meta result (assoc (combine-queries-meta [q-variants-info q-product-by-id]) :total-time (/ (- (System/nanoTime) starttime) 1e6)) )
       result)))
