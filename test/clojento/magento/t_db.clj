@@ -155,13 +155,16 @@
             (get-product-data (:db @system) 1)  => (contains {:type "simple"})
             (get-product-data (:db @system) 2)  => (contains {:type "configurable"})
             (get-product-data (:db @system) 3)  => (contains {:type "simple"})
-            (get-product-data (:db @system) 2)  => (contains {:type "configurable"}))
+            (get-product-data (:db @system) 6)  => (contains {:type "configurable"}))
       (fact "sku"
             (get-product-data (:db @system) -1) =not=> (contains {:sku anything})
             (get-product-data (:db @system) 1)  => (contains {:sku "sku-1"})
             (get-product-data (:db @system) 2)  => (contains {:sku "sku-2"})
             (get-product-data (:db @system) 3)  => (contains {:sku "sku-2.1"})
             (get-product-data (:db @system) 6)  => (contains {:sku "sku-6"}))
+      (fact "variant entities"
+            (get-product-data (:db @system) 2)  => (contains {:variants (contains (contains {:type "simple" :sku "sku-2.1"}
+                                                                                            {:type "simple" :sku "sku-2.2"}))}))
       (fact "has meta"
             (meta (get-product-data (:db @system) -1 :debug true)) =not=> nil?)
       (fact "meta contains time and total time"
