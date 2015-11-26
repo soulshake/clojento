@@ -97,13 +97,15 @@
 
     (facts "get-variants-info"
       (fact "not found"
-            (get-variants-info (:db @system) -1) => {:has-variants false :is-variant false})
+            (get-variants-info (:db @system) -1) => {:found-variants false :is-variant false})
       (fact "simple product"
-            (get-variants-info (:db @system) 1)  => {:has-variants false :is-variant false})
+            (get-variants-info (:db @system) 1)  => {:found-variants false :is-variant false})
       (fact "configurable product"
-            (get-variants-info (:db @system) 2)  => {:has-variants true  :is-variant false :variant-ids [3 4 5]})
+            (get-variants-info (:db @system) 2)  => {:found-variants true  :is-variant false :variant-ids [3 4 5]})
       (fact "variant (child product)"
-            (get-variants-info (:db @system) 3)  => {:has-variants false :is-variant true  :product-id 2})
+            (get-variants-info (:db @system) 3)  => {:found-variants false :is-variant true  :product-id 2})
+      (fact "configurable product without children"
+            (get-variants-info (:db @system) 6)  => {:found-variants false :is-variant false})
       (fact "has meta"
             (meta (get-variants-info (:db @system) -1 :debug true)) => (contains {:hits 0})))
 
@@ -137,12 +139,12 @@
             (get-product-data (:db @system) 2)  => (contains {:product-id 2})
             (get-product-data (:db @system) 3)  => (contains {:product-id 2}) ; product-id == parent-id
             (get-product-data (:db @system) 6)  => (contains {:product-id 6}))
-      (fact "variants"
+      (fact "only configurable products have variants"
             (get-product-data (:db @system) -1) =not=> (contains {:variants anything})
             (get-product-data (:db @system) 1)  =not=> (contains {:variants anything})
             (get-product-data (:db @system) 2)  =>     (contains {:variants anything})
             (get-product-data (:db @system) 3)  =not=> (contains {:variants anything})
-            (get-product-data (:db @system) 2)  =>     (contains {:variants []}))
+            (get-product-data (:db @system) 6)  =>     (contains {:variants []}))
       (fact "entity-ids"
             (meta (get-product-data (:db @system) -1 :debug true)) => (contains {:entity-ids [-1]})
             (meta (get-product-data (:db @system)  1 :debug true)) => (contains {:entity-ids [1]})

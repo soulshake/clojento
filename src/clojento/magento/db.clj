@@ -95,13 +95,13 @@
   (let [q-result             (run-query db :variants [query-id query-id] :debug debug)
         q-meta               (meta q-result)
         grouped-by-parent    (group-by :product_id q-result)
-        has-variants         (contains? grouped-by-parent query-id)
+        found-variants       (contains? grouped-by-parent query-id)
         product-with-variant (first q-result)]
-    (if has-variants
-      (with-meta {:is-variant false :has-variants true :variant-ids (map :variant_id (get grouped-by-parent query-id))} q-meta)
+    (if found-variants
+      (with-meta {:is-variant false :found-variants true :variant-ids (map :variant_id (get grouped-by-parent query-id))} q-meta)
       (if (nil? product-with-variant)
-        (with-meta {:is-variant false :has-variants false} q-meta)
-        (with-meta {:is-variant true :has-variants false :product-id (:product_id product-with-variant)} q-meta)))))
+        (with-meta {:is-variant false :found-variants false} q-meta)
+        (with-meta {:is-variant true  :found-variants false :product-id (:product_id product-with-variant)} q-meta)))))
 
 ; ------------------------------------------------------------------------------
 
@@ -126,7 +126,7 @@
                             (merge {:found true :is-variant is-variant :is-product is-product :product-id product-id}
                                    (first (get product-entities query-id)))
                             {:found false :is-variant is-variant :is-product is-product :product-id nil})
-        with-variants     (if (:has-variants q-variants-info)
+        with-variants     (if (.equals "configurable" (:type basic-result))
                             (assoc basic-result :variants [])
                             basic-result)
         result            with-variants]
