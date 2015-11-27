@@ -1,5 +1,7 @@
 # clojento
 
+[![Build Status](https://travis-ci.org/jlgeering/clojento.svg)](https://travis-ci.org/jlgeering/clojento)
+
 Magento Tools
 
 ## Usage
