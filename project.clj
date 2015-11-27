@@ -18,4 +18,5 @@
   :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.2.11"]
                                   [midje "1.8.2"]
                                   [com.h2database/h2 "1.4.190"]]
+                   :plugins [[lein-midje "3.2"]]
                    :source-paths ["dev"]}})
