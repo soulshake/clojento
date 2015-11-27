@@ -32,13 +32,16 @@ SELECT
   created_at as `date-created`,
   updated_at as `date-updated`,
   type_id as type,
-  attribute_set_id as `attribute_set`
+  attribute_set_id as `attribute-set`
 FROM catalog_product_entity
 WHERE entity_type_id = 4 and entity_id IN (:product_ids)
 
 -- name: product-websites
 -- no comment
-SELECT * FROM catalog_product_website WHERE product_id IN (:product_ids)
+SELECT
+  product_id as id,
+  website_id as `website-id`
+FROM catalog_product_website WHERE product_id IN (:product_ids)
 
 -- name: product-stock-status
 -- no comment

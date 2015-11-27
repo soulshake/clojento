@@ -82,24 +82,34 @@
             (raw-jdbc-fetch (:db @system) "SHOW TABLES;") => (contains {:table_name "core_store", :table_schema "public"}))
       (fact "make sure db is read-only"
             (raw-jdbc-execute (:db @system) write-query) => (throws org.h2.jdbc.JdbcBatchUpdateException #"read only"))
-      (fact "db contains 2 websites (admin + 1) and 2 stores"
-            (count (raw-jdbc-fetch (:db @system) "SELECT * FROM core_website;")) => 2
+      (fact "db contains 3 websites (admin + 2) and 2 stores"
+            (count (raw-jdbc-fetch (:db @system) "SELECT * FROM core_website;")) => 3
             (count (raw-jdbc-fetch (:db @system) "SELECT * FROM core_store;")) => 2
-            (count (run-query (:db @system) :websites [])) => 2
-            (count (run-query (:db @system) :websites [] :debug true)) => 2)
+            (count (run-query (:db @system) :websites [])) => 3
+            (count (run-query (:db @system) :websites [] :debug true)) => 3)
       (fact "meta contains :hits"
-            (meta (raw-jdbc-fetch (:db @system) "SELECT * FROM core_website;"  :debug true)) => (contains {:hits 2})))
+            (meta (raw-jdbc-fetch (:db @system) "SELECT * FROM core_website;"  :debug true)) => (contains {:hits 3})))
 
-    (facts "query: product-entities"
+    (facts "query :product-entities"
       (fact "get missing product(s)"
             (run-query (:db @system) :product-entities [-1]) => []
             (run-query (:db @system) :product-entities [[-1 -2]]) => [])
       (fact "get product with id 1 (as simple param or list)"
-            (first (run-query (:db @system) :product-entities [ 1 ])) => (contains {:id 1 :sku "sku-1" :type "simple" :attribute_set 4 :date-created anything :date-updated anything})
-            (first (run-query (:db @system) :product-entities [[1]])) => (contains {:id 1 :sku "sku-1" :type "simple" :attribute_set 4 :date-created anything :date-updated anything}))
+            (first (run-query (:db @system) :product-entities [ 1 ])) => (contains {:id 1 :sku "sku-1" :type "simple" :attribute-set 4 :date-created anything :date-updated anything})
+            (first (run-query (:db @system) :product-entities [[1]])) => (contains {:id 1 :sku "sku-1" :type "simple" :attribute-set 4 :date-created anything :date-updated anything}))
       (fact "get multiple products"
             (run-query (:db @system) :product-entities [[1 2]])   => (contains (contains {:id 1})(contains {:id 2}))
             (run-query (:db @system) :product-entities [[3 2 1]]) => (contains (contains {:id 1})(contains {:id 2}))))
+
+    (facts "query :product-websites"
+      (fact "get missing product(s)"
+            (run-query (:db @system) :product-websites [-1]) => []
+            (run-query (:db @system) :product-websites [[-1 -2]]) => [])
+      (fact "get product with id 1"
+            (run-query (:db @system) :product-websites [ 1 ]) => (contains (contains {:id 1 :website-id 1})(contains {:id 1 :website-id 2})))
+      (fact "get multiple products"
+            (run-query (:db @system) :product-websites [[1 2]])   => (contains (contains {:id 1 :website-id 1})(contains {:id 1 :website-id 2})(contains {:id 2 :website-id 1}))
+            (count (run-query (:db @system) :product-websites [[3 2 1]])) => 4))
 
     (facts "get-variants-info"
       (fact "not found"

@@ -6,7 +6,8 @@
 INSERT INTO `core_website` (`website_id`, `code`, `name`, `sort_order`, `default_group_id`, `is_default`, `is_staging`, `master_login`, `master_password`, `visibility`)
 VALUES
   (0, 'admin', 'Admin', 0, 0, 0, 0, '', '', ''),
-  (1, 'website_1', 'Website 1', 0, 1, 1, 0, '', '', '');
+  (1, 'website_1', 'Website 1', 0, 1, 1, 0, '', '', ''),
+  (2, 'website_2', 'Website 2', 1, 2, 0, 0, '', '', '');
 
 --;;
 
@@ -65,6 +66,16 @@ VALUES
 	(3, 2),
 	(4, 2),
 	(5, 2);
+
+INSERT INTO `catalog_product_website` (`product_id`, `website_id`)
+VALUES
+  (1, 1),
+  (1, 2),
+  (2, 1),
+  (3, 1),
+  (4, 1),
+  (5, 1),
+  (6, 2);
 
 -- required for mysql:
 -- SET GLOBAL sql_mode='';
