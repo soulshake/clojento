@@ -186,7 +186,7 @@
       (fact "meta contains time and total time"
             (meta (get-product-data (:db @system) -1 :debug true)) => (contains {:time pos? :total-time pos?}))
       (fact "meta contains all queries"
-            (count (:queries (meta (get-product-data (:db @system) -1 :debug true)))) => 2))
+            (count (:queries (meta (get-product-data (:db @system) -1 :debug true)))) => 3))
 
     (log/info "completed tests with read-only DB")))
 
