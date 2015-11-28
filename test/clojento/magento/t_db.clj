@@ -197,7 +197,9 @@
                                                           :sku           "sku-1"
                                                           :attribute-set 4
                                                           :date-created  anything
-                                                          :date-updated  anything}]))
+                                                          :date-updated  anything
+                                                          ; :websites      (just ["website_1" "website_2"] :in-any-order)
+                                                          }]))
       (fact "has meta"
             (meta (get-product-data (:db @system) -1 :debug true)) =not=> nil?)
       (fact "meta contains time and total time"

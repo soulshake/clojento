@@ -124,14 +124,15 @@
         variants           (dissoc product-entities query-id)
         found              (not (nil? query-entity))
         is-product         (and found (not is-variant))
-        basic-result      (if found
-                            (merge {:found true :is-variant is-variant :is-product is-product :product-id product-id}
-                                   query-entity)
-                            {:found false :is-variant is-variant :is-product is-product :product-id nil})
-        with-variants     (if (.equals "configurable" (:type basic-result))
-                            (assoc basic-result :variants (map first (vals variants)))
-                            basic-result)
-        result            with-variants]
+        queries            [q-variants-info q-product-entities q-product-websites]
+        basic-result       (if found
+                             (merge {:found true :is-variant is-variant :is-product is-product :product-id product-id}
+                                    query-entity)
+                             {:found false :is-variant is-variant :is-product is-product :product-id nil})
+        with-variants      (if (.equals "configurable" (:type basic-result))
+                             (assoc basic-result :variants (map first (vals variants)))
+                             basic-result)
+        result             with-variants]
     (if debug
-      (with-meta result (assoc (combine-queries-meta [q-variants-info q-product-entities q-product-websites]) :entity-ids entity-ids :total-time (/ (- (System/nanoTime) starttime) 1e6)) )
+      (with-meta result (assoc (combine-queries-meta queries) :entity-ids entity-ids :total-time (/ (- (System/nanoTime) starttime) 1e6)) )
       result)))
