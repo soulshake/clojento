@@ -118,6 +118,7 @@
         product-id         (if is-variant (:product-id q-variants-info) query-id)
         entity-ids         (cons query-id (:variant-ids q-variants-info))
         q-product-entities (run-query db :product-entities [entity-ids] :debug debug)
+        q-product-websites (run-query db :product-websites [entity-ids] :debug debug)
         product-entities   (group-by :id q-product-entities) ; map (first) on values
         query-entity       (first (get product-entities query-id))
         variants           (dissoc product-entities query-id)
@@ -132,5 +133,5 @@
                             basic-result)
         result            with-variants]
     (if debug
-      (with-meta result (assoc (combine-queries-meta [q-variants-info q-product-entities]) :entity-ids entity-ids :total-time (/ (- (System/nanoTime) starttime) 1e6)) )
+      (with-meta result (assoc (combine-queries-meta [q-variants-info q-product-entities q-product-websites]) :entity-ids entity-ids :total-time (/ (- (System/nanoTime) starttime) 1e6)) )
       result)))
