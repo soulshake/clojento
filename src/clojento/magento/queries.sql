@@ -41,11 +41,19 @@ WHERE entity_type_id = 4 and entity_id IN (:product_ids)
 SELECT
   product_id as id,
   website_id as `website-id`
-FROM catalog_product_website WHERE product_id IN (:product_ids)
+FROM catalog_product_website
+WHERE product_id IN (:product_ids)
 
--- name: product-stock-status
+-- name: product-stock
 -- no comment
-SELECT * FROM cataloginventory_stock_status WHERE product_id IN (:product_ids)
+SELECT
+  product_id as id,
+  website_id as `website-id`,
+  stock_id as `stock-id`,
+  qty as `qty`,
+  stock_status as `stock-status`
+FROM cataloginventory_stock_status
+WHERE product_id IN (:product_ids)
 
 -- name: product-attributes-varchar
 -- no comment

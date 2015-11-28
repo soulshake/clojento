@@ -111,6 +111,10 @@
             (run-query (:db @system) :product-websites [[1 2]])   => (contains (contains {:id 1 :website-id 1})(contains {:id 1 :website-id 2})(contains {:id 2 :website-id 1}))
             (count (run-query (:db @system) :product-websites [[3 2 1]])) => 4))
 
+    (facts "query :product-stock"
+      (fact "get missing product"
+            (run-query (:db @system) :product-stock [-1]) => []))
+
     (facts "get-variants-info"
       (fact "not found"
             (get-variants-info (:db @system) -1) => {:found-variants false :is-variant false})

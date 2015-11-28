@@ -1,3 +1,7 @@
+DROP TABLE IF EXISTS `cataloginventory_stock_status`;
+--;;
+DROP TABLE IF EXISTS `cataloginventory_stock`;
+--;;
 DROP TABLE IF EXISTS `catalog_product_website`;
 --;;
 DROP TABLE IF EXISTS `catalog_product_super_link`;
