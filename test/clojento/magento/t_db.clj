@@ -187,6 +187,17 @@
       (fact "variant entities"
             (get-product-data (:db @system) 2)  => (contains {:variants (contains (contains {:type "simple" :sku "sku-2.1"}
                                                                                             {:type "simple" :sku "sku-2.2"}))}))
+      (fact "simple product"
+            (get-product-data (:db @system) 1) => (just [{:found         true
+                                                          :is-product    true
+                                                          :is-variant    false
+                                                          :product-id    1
+                                                          :id            1
+                                                          :type          "simple"
+                                                          :sku           "sku-1"
+                                                          :attribute-set 4
+                                                          :date-created  anything
+                                                          :date-updated  anything}]))
       (fact "has meta"
             (meta (get-product-data (:db @system) -1 :debug true)) =not=> nil?)
       (fact "meta contains time and total time"
