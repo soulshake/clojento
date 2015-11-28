@@ -79,7 +79,11 @@ AND entity_id IN (:product_ids)
 
 -- name: product-attributes-datetime
 -- no comment
-SELECT *
+SELECT
+  entity_id as id,
+  attribute_id as `attribute-id`,
+  store_id as `store-id`,
+  value as value
 FROM catalog_product_entity_datetime
 WHERE entity_type_id = 4
 AND entity_id IN (:product_ids)

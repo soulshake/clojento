@@ -56,6 +56,8 @@ VALUES
   (60, 4, 'name', NULL, '', 'varchar', '', '', 'text', 'Name', '', '', 1, 0, '', 0, ''),
   (61, 4, 'description', NULL, '', 'text', '', '', 'textarea', 'Description', '', '', 0, 0, '', 0, ''),
   (62, 4, 'short_description', NULL, '', 'text', '', '', 'textarea', 'Short Description', '', '', 0, 0, '', 0, ''),
+  (66, 4, 'special_from_date', NULL, 'catalog/product_attribute_backend_startdate', 'datetime', '', '', 'date', 'Special Price From Date', '', '', 0, 0, '', 0, ''),
+  (67, 4, 'special_to_date', NULL, 'eav/entity_attribute_backend_datetime', 'datetime', '', '', 'date', 'Special Price To Date', '', '', 0, 0, '', 0, ''),
   (71, 4, 'meta_title', NULL, '', 'varchar', '', '', 'text', 'Meta Title', '', '', 0, 0, '', 0, ''),
   (73, 4, 'meta_description', NULL, '', 'varchar', '', '', 'textarea', 'Meta Description', 'validate-length maximum-length-255', '', 0, 0, '', 0, 'Maximum 255 chars');
 
@@ -117,6 +119,13 @@ INSERT INTO `catalog_product_entity_text` (`entity_type_id`, `attribute_id`, `st
 VALUES
   (4, 61, 0, 1, 'This is the long description for product 1'),
   (4, 62, 0, 1, 'This is the short description for product 1');
+
+--;;
+
+INSERT INTO `catalog_product_entity_datetime` (`entity_type_id`, `attribute_id`, `store_id`, `entity_id`, `value`)
+VALUES
+  (4, 66, 1, 1, '2015-06-26 12:02:57'),
+  (4, 67, 1, 1, '2015-07-01 13:35:47');
 
 -- required for mysql:
 -- SET GLOBAL sql_mode='';

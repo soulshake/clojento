@@ -135,9 +135,16 @@
     (facts "query :product-attributes-text"
       (fact "get missing product"
             (run-query (:db @system) :product-attributes-text [-1]) => [])
-      (future-fact "get product with id 1"
-            (run-query (:db @system) :product-attributes-text [1]) => (just [(contains {:id 1 :attribute-id 61 :store-id 0 :value anything})                   ; h2 returns a org.h2.jdbc.JdbcClob, .toString == "This is the long description for product 1"
-                                                                             (contains {:id 1 :attribute-id 62 :store-id 0 :value anything})] :in-any-order))) ; h2 returns a org.h2.jdbc.JdbcClob, .toString == "This is the short description for product 1"
+      (fact "get product with id 1"
+            (run-query (:db @system) :product-attributes-text [1]) => (just [(contains {:id 1 :attribute-id 61 :store-id 0 :value anything})                   ; TODO h2 returns a org.h2.jdbc.JdbcClob, .toString == "This is the long description for product 1"
+                                                                             (contains {:id 1 :attribute-id 62 :store-id 0 :value anything})] :in-any-order))) ; TODO h2 returns a org.h2.jdbc.JdbcClob, .toString == "This is the short description for product 1"
+
+    (facts "query :product-attributes-datetime"
+      (fact "get missing product"
+            (run-query (:db @system) :product-attributes-datetime [-1]) => [])
+      (fact "get product with id 1"
+            (run-query (:db @system) :product-attributes-datetime [1]) => (just [(contains {:id 1 :attribute-id 66 :store-id 1 :value anything})                   ; TODO checking dates
+                                                                                 (contains {:id 1 :attribute-id 67 :store-id 1 :value anything})] :in-any-order))) ; TODO checking dates
 
     (facts "get-variants-info"
       (fact "not found"
