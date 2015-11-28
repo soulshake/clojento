@@ -20,44 +20,44 @@ VALUES
 
 INSERT INTO `core_store` (`store_id`, `code`, `website_id`, `group_id`, `name`, `sort_order`, `is_active`)
 VALUES
-	(0, 'admin', 0, 0, 'Admin', 0, 1),
-	(1, 'store_1', 1, 1, 'Store 1', 0, 1);
+  (0, 'admin', 0, 0, 'Admin', 0, 1),
+  (1, 'store_1', 1, 1, 'Store 1', 0, 1);
 
 --;;
 
 INSERT INTO `eav_entity_type` (`entity_type_id`, `entity_type_code`, `entity_model`, `attribute_model`, `entity_table`, `value_table_prefix`, `entity_id_field`, `is_data_sharing`, `data_sharing_key`, `default_attribute_set_id`, `increment_model`, `increment_per_store`, `increment_pad_length`, `increment_pad_char`, `additional_attribute_table`, `entity_attribute_collection`)
 VALUES
-	(1, 'customer', 'customer/customer', 'customer/attribute', 'customer/entity', '', '', 1, 'default', 1, 'eav/entity_increment_numeric', 0, 8, '0', 'customer/eav_attribute', 'customer/attribute_collection'),
-	(2, 'customer_address', 'customer/address', 'customer/attribute', 'customer/address_entity', '', '', 1, 'default', 2, '', 0, 8, '0', 'customer/eav_attribute', 'customer/address_attribute_collection'),
-	(3, 'catalog_category', 'catalog/category', 'catalog/resource_eav_attribute', 'catalog/category', '', '', 1, 'default', 3, '', 0, 8, '0', 'catalog/eav_attribute', 'catalog/category_attribute_collection'),
-	(4, 'catalog_product', 'catalog/product', 'catalog/resource_eav_attribute', 'catalog/product', '', '', 1, 'default', 4, '', 0, 8, '0', 'catalog/eav_attribute', 'catalog/product_attribute_collection'),
-	(5, 'order', 'sales/order', '', 'sales/order', '', '', 1, 'default', 0, 'eav/entity_increment_numeric', 1, 8, '0', '', ''),
-	(6, 'invoice', 'sales/order_invoice', '', 'sales/invoice', '', '', 1, 'default', 0, 'eav/entity_increment_numeric', 1, 8, '0', '', ''),
-	(7, 'creditmemo', 'sales/order_creditmemo', '', 'sales/creditmemo', '', '', 1, 'default', 0, 'eav/entity_increment_numeric', 1, 8, '0', '', ''),
-	(8, 'shipment', 'sales/order_shipment', '', 'sales/shipment', '', '', 1, 'default', 0, 'eav/entity_increment_numeric', 1, 8, '0', '', '');
+  (1, 'customer', 'customer/customer', 'customer/attribute', 'customer/entity', '', '', 1, 'default', 1, 'eav/entity_increment_numeric', 0, 8, '0', 'customer/eav_attribute', 'customer/attribute_collection'),
+  (2, 'customer_address', 'customer/address', 'customer/attribute', 'customer/address_entity', '', '', 1, 'default', 2, '', 0, 8, '0', 'customer/eav_attribute', 'customer/address_attribute_collection'),
+  (3, 'catalog_category', 'catalog/category', 'catalog/resource_eav_attribute', 'catalog/category', '', '', 1, 'default', 3, '', 0, 8, '0', 'catalog/eav_attribute', 'catalog/category_attribute_collection'),
+  (4, 'catalog_product', 'catalog/product', 'catalog/resource_eav_attribute', 'catalog/product', '', '', 1, 'default', 4, '', 0, 8, '0', 'catalog/eav_attribute', 'catalog/product_attribute_collection'),
+  (5, 'order', 'sales/order', '', 'sales/order', '', '', 1, 'default', 0, 'eav/entity_increment_numeric', 1, 8, '0', '', ''),
+  (6, 'invoice', 'sales/order_invoice', '', 'sales/invoice', '', '', 1, 'default', 0, 'eav/entity_increment_numeric', 1, 8, '0', '', ''),
+  (7, 'creditmemo', 'sales/order_creditmemo', '', 'sales/creditmemo', '', '', 1, 'default', 0, 'eav/entity_increment_numeric', 1, 8, '0', '', ''),
+  (8, 'shipment', 'sales/order_shipment', '', 'sales/shipment', '', '', 1, 'default', 0, 'eav/entity_increment_numeric', 1, 8, '0', '', '');
 
 --;;
 
 INSERT INTO `eav_attribute_set` (`attribute_set_id`, `entity_type_id`, `attribute_set_name`, `sort_order`)
 VALUES
-	(1, 1, 'Default', 1),
-	(2, 2, 'Default', 1),
-	(3, 3, 'Default', 1),
-	(4, 4, 'Default', 1),
-	(5, 5, 'Default', 1),
-	(6, 6, 'Default', 1),
-	(7, 7, 'Default', 1),
-	(8, 8, 'Default', 1);
+  (1, 1, 'Default', 1),
+  (2, 2, 'Default', 1),
+  (3, 3, 'Default', 1),
+  (4, 4, 'Default', 1),
+  (5, 5, 'Default', 1),
+  (6, 6, 'Default', 1),
+  (7, 7, 'Default', 1),
+  (8, 8, 'Default', 1);
 
 --;;
 
 INSERT INTO `eav_attribute` (`attribute_id`, `entity_type_id`, `attribute_code`, `attribute_model`, `backend_model`, `backend_type`, `backend_table`, `frontend_model`, `frontend_input`, `frontend_label`, `frontend_class`, `source_model`, `is_required`, `is_user_defined`, `default_value`, `is_unique`, `note`)
 VALUES
-	(60, 4, 'name', NULL, '', 'varchar', '', '', 'text', 'Name', '', '', 1, 0, '', 0, ''),
-	(61, 4, 'description', NULL, '', 'text', '', '', 'textarea', 'Description', '', '', 0, 0, '', 0, ''),
-	(62, 4, 'short_description', NULL, '', 'text', '', '', 'textarea', 'Short Description', '', '', 0, 0, '', 0, ''),
-	(71, 4, 'meta_title', NULL, '', 'varchar', '', '', 'text', 'Meta Title', '', '', 0, 0, '', 0, ''),
-	(73, 4, 'meta_description', NULL, '', 'varchar', '', '', 'textarea', 'Meta Description', 'validate-length maximum-length-255', '', 0, 0, '', 0, 'Maximum 255 chars');
+  (60, 4, 'name', NULL, '', 'varchar', '', '', 'text', 'Name', '', '', 1, 0, '', 0, ''),
+  (61, 4, 'description', NULL, '', 'text', '', '', 'textarea', 'Description', '', '', 0, 0, '', 0, ''),
+  (62, 4, 'short_description', NULL, '', 'text', '', '', 'textarea', 'Short Description', '', '', 0, 0, '', 0, ''),
+  (71, 4, 'meta_title', NULL, '', 'varchar', '', '', 'text', 'Meta Title', '', '', 0, 0, '', 0, ''),
+  (73, 4, 'meta_description', NULL, '', 'varchar', '', '', 'textarea', 'Meta Description', 'validate-length maximum-length-255', '', 0, 0, '', 0, 'Maximum 255 chars');
 
 --;;
 
@@ -74,9 +74,9 @@ VALUES
 
 INSERT INTO `catalog_product_super_link` (`product_id`, `parent_id`)
 VALUES
-	(3, 2),
-	(4, 2),
-	(5, 2);
+  (3, 2),
+  (4, 2),
+  (5, 2);
 
 --;;
 
@@ -94,29 +94,29 @@ VALUES
 
 INSERT INTO `cataloginventory_stock` (`stock_id`, `stock_name`)
 VALUES
-	(1, 'Default');
+  (1, 'Default');
 
 --;;
 
 INSERT INTO `cataloginventory_stock_status` (`product_id`, `website_id`, `stock_id`, `qty`, `stock_status`)
 VALUES
-	(1, 1, 1, 2.0000, 1),
-	(1, 2, 1, 0.0000, 0);
+  (1, 1, 1, 2.0000, 1),
+  (1, 2, 1, 0.0000, 0);
 
 --;;
 
 INSERT INTO `catalog_product_entity_varchar` (`entity_type_id`, `attribute_id`, `store_id`, `entity_id`, `value`)
 VALUES
-	(4, 60, 0, 1, 'Simple Product 1'),
-	(4, 71, 0, 1, NULL),
-	(4, 73, 0, 1, 'This is the simple product with id 1');
+  (4, 60, 0, 1, 'Simple Product 1'),
+  (4, 71, 0, 1, NULL),
+  (4, 73, 0, 1, 'This is the simple product with id 1');
 
 --;;
 
 INSERT INTO `catalog_product_entity_text` (`entity_type_id`, `attribute_id`, `store_id`, `entity_id`, `value`)
 VALUES
-	(4, 61, 0, 1, 'This is the long description for product 1'),
-	(4, 62, 0, 1, 'This is the short description for product 1');
+  (4, 61, 0, 1, 'This is the long description for product 1'),
+  (4, 62, 0, 1, 'This is the short description for product 1');
 
 -- required for mysql:
 -- SET GLOBAL sql_mode='';
