@@ -60,12 +60,15 @@ VALUES
   (5, 4, 4, 'simple',       'sku-2.3', 0, 0, '2011-11-21 14:04:02', '2012-02-23 16:38:02', NULL, NULL),
   (6, 4, 4, 'configurable', 'sku-6',   0, 0, '2011-11-21 14:05:00', '2012-02-23 16:39:00', NULL, NULL);
 
+--;;
 
 INSERT INTO `catalog_product_super_link` (`product_id`, `parent_id`)
 VALUES
 	(3, 2),
 	(4, 2),
 	(5, 2);
+
+--;;
 
 INSERT INTO `catalog_product_website` (`product_id`, `website_id`)
 VALUES
@@ -76,6 +79,20 @@ VALUES
   (4, 1),
   (5, 1),
   (6, 2);
+
+--;;
+
+INSERT INTO `cataloginventory_stock` (`stock_id`, `stock_name`)
+VALUES
+	(1, 'Default');
+
+--;;
+
+INSERT INTO `cataloginventory_stock_status` (`product_id`, `website_id`, `stock_id`, `qty`, `stock_status`)
+VALUES
+	(1, 1, 1, 2.0000, 1),
+	(1, 2, 1, 0.0000, 0);
+
 
 -- required for mysql:
 -- SET GLOBAL sql_mode='';

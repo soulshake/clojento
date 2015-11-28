@@ -113,7 +113,9 @@
 
     (facts "query :product-stock"
       (fact "get missing product"
-            (run-query (:db @system) :product-stock [-1]) => []))
+            (run-query (:db @system) :product-stock [-1]) => [])
+      (fact "get product with id 1"
+            (run-query (:db @system) :product-stock [ 1 ]) => (contains {:id 1 :website-id 1 :stock-id 1 :qty 2.0000M :stock-status 1} {:id 1 :website-id 2 :stock-id 1 :qty 0.0000M :stock-status 0})))
 
     (facts "get-variants-info"
       (fact "not found"

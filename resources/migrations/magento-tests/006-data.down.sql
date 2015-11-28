@@ -1,3 +1,9 @@
+DELETE FROM `cataloginventory_stock_status`;
+--;;
+DELETE FROM `cataloginventory_stock`;
+--;;
+DELETE FROM `catalog_product_website`;
+--;;
 DELETE FROM `catalog_product_super_link`;
 --;;
 DELETE FROM `catalog_product_entity`;
