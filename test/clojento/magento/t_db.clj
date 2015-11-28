@@ -98,17 +98,23 @@
             (first (run-query (:db @system) :product-entities [ 1 ])) => (just {:id 1 :sku "sku-1" :type "simple" :attribute-set 4 :date-created anything :date-updated anything})
             (first (run-query (:db @system) :product-entities [[1]])) => (just {:id 1 :sku "sku-1" :type "simple" :attribute-set 4 :date-created anything :date-updated anything}))
       (fact "get multiple products"
-            (run-query (:db @system) :product-entities [[1 2]])   => (just [(contains {:id 1}) (contains {:id 2})] :in-any-order)
-            (run-query (:db @system) :product-entities [[3 2 1]]) => (just [(contains {:id 1}) (contains {:id 2}) (contains {:id 3})] :in-any-order)))
+            (run-query (:db @system) :product-entities [[1 2]])   => (just [(contains {:id 1})
+                                                                            (contains {:id 2})] :in-any-order)
+            (run-query (:db @system) :product-entities [[3 2 1]]) => (just [(contains {:id 1})
+                                                                            (contains {:id 2})
+                                                                            (contains {:id 3})] :in-any-order)))
 
     (facts "query :product-websites"
       (fact "get missing product(s)"
             (run-query (:db @system) :product-websites [-1]) => []
             (run-query (:db @system) :product-websites [[-1 -2]]) => [])
       (fact "get product with id 1"
-            (run-query (:db @system) :product-websites [ 1 ]) => (contains {:id 1 :website-id 1} {:id 1 :website-id 2}))
+            (run-query (:db @system) :product-websites [ 1 ]) => (just [{:id 1 :website-id 1}
+                                                                        {:id 1 :website-id 2}] :in-any-order))
       (fact "get multiple products"
-            (run-query (:db @system) :product-websites [[1 2]])   => (contains {:id 1 :website-id 1} {:id 1 :website-id 2} {:id 2 :website-id 1})
+            (run-query (:db @system) :product-websites [[1 2]])   => (just [{:id 1 :website-id 1}
+                                                                            {:id 1 :website-id 2}
+                                                                            {:id 2 :website-id 1}] :in-any-order)
             (count (run-query (:db @system) :product-websites [[3 2 1]])) => 4))
 
     (facts "query :product-stock"
