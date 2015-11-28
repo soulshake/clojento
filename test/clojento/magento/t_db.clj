@@ -115,7 +115,16 @@
       (fact "get missing product"
             (run-query (:db @system) :product-stock [-1]) => [])
       (fact "get product with id 1"
-            (run-query (:db @system) :product-stock [ 1 ]) => (contains {:id 1 :website-id 1 :stock-id 1 :qty 2.0000M :stock-status 1} {:id 1 :website-id 2 :stock-id 1 :qty 0.0000M :stock-status 0})))
+            (run-query (:db @system) :product-stock [ 1 ]) => (just [{:id 1 :website-id 1 :stock-id 1 :qty 2.0000M :stock-status 1}
+                                                                     {:id 1 :website-id 2 :stock-id 1 :qty 0.0000M :stock-status 0}] :in-any-order)))
+
+    (facts "query :product-attributes-varchar"
+      (fact "get missing product(s)"
+            (run-query (:db @system) :product-attributes-varchar [-1]) => [])
+      (fact "get product with id 1 (as simple param or list)"
+            (run-query (:db @system) :product-attributes-varchar [1]) => (just [{:id 1 :attribute-id 60 :store-id 0 :value "Simple Product 1"}
+                                                                                {:id 1 :attribute-id 71 :store-id 0 :value nil}
+                                                                                {:id 1 :attribute-id 73 :store-id 0 :value "This is the simple product with id 1"}] :in-any-order)))
 
     (facts "get-variants-info"
       (fact "not found"
