@@ -54,6 +54,8 @@ VALUES
 INSERT INTO `eav_attribute` (`attribute_id`, `entity_type_id`, `attribute_code`, `attribute_model`, `backend_model`, `backend_type`, `backend_table`, `frontend_model`, `frontend_input`, `frontend_label`, `frontend_class`, `source_model`, `is_required`, `is_user_defined`, `default_value`, `is_unique`, `note`)
 VALUES
 	(60, 4, 'name', NULL, '', 'varchar', '', '', 'text', 'Name', '', '', 1, 0, '', 0, ''),
+	(61, 4, 'description', NULL, '', 'text', '', '', 'textarea', 'Description', '', '', 0, 0, '', 0, ''),
+	(62, 4, 'short_description', NULL, '', 'text', '', '', 'textarea', 'Short Description', '', '', 0, 0, '', 0, ''),
 	(71, 4, 'meta_title', NULL, '', 'varchar', '', '', 'text', 'Meta Title', '', '', 0, 0, '', 0, ''),
 	(73, 4, 'meta_description', NULL, '', 'varchar', '', '', 'textarea', 'Meta Description', 'validate-length maximum-length-255', '', 0, 0, '', 0, 'Maximum 255 chars');
 
@@ -61,7 +63,7 @@ VALUES
 
 INSERT INTO `catalog_product_entity` (`entity_id`, `entity_type_id`, `attribute_set_id`, `type_id`, `sku`, `has_options`, `required_options`, `created_at`, `updated_at`, `activation_date`, `expiry_date`)
 VALUES
-	(1, 4, 4, 'simple',       'sku-1',   0, 0, '2011-11-21 14:02:58', '2013-11-14 10:17:49', NULL, NULL),
+  (1, 4, 4, 'simple',       'sku-1',   0, 0, '2011-11-21 14:02:58', '2013-11-14 10:17:49', NULL, NULL),
   (2, 4, 4, 'configurable', 'sku-2',   1, 1, '2011-11-21 14:04:03', '2012-02-23 16:38:05', NULL, NULL),
   (3, 4, 4, 'simple',       'sku-2.1', 0, 0, '2011-11-21 14:04:00', '2012-02-23 16:38:00', NULL, NULL),
   (4, 4, 4, 'simple',       'sku-2.2', 0, 0, '2011-11-21 14:04:01', '2012-02-23 16:38:01', NULL, NULL),
@@ -108,6 +110,13 @@ VALUES
 	(4, 60, 0, 1, 'Simple Product 1'),
 	(4, 71, 0, 1, NULL),
 	(4, 73, 0, 1, 'This is the simple product with id 1');
+
+--;;
+
+INSERT INTO `catalog_product_entity_text` (`entity_type_id`, `attribute_id`, `store_id`, `entity_id`, `value`)
+VALUES
+	(4, 61, 0, 1, 'This is the long description for product 1'),
+	(4, 62, 0, 1, 'This is the short description for product 1');
 
 -- required for mysql:
 -- SET GLOBAL sql_mode='';

@@ -132,6 +132,13 @@
                                                                                 {:id 1 :attribute-id 71 :store-id 0 :value nil}
                                                                                 {:id 1 :attribute-id 73 :store-id 0 :value "This is the simple product with id 1"}] :in-any-order)))
 
+    (facts "query :product-attributes-text"
+      (fact "get missing product"
+            (run-query (:db @system) :product-attributes-text [-1]) => [])
+      (future-fact "get product with id 1"
+            (run-query (:db @system) :product-attributes-text [1]) => (just [(contains {:id 1 :attribute-id 61 :store-id 0 :value anything})                   ; h2 returns a org.h2.jdbc.JdbcClob, .toString == "This is the long description for product 1"
+                                                                             (contains {:id 1 :attribute-id 62 :store-id 0 :value anything})] :in-any-order))) ; h2 returns a org.h2.jdbc.JdbcClob, .toString == "This is the short description for product 1"
+
     (facts "get-variants-info"
       (fact "not found"
             (get-variants-info (:db @system) -1) => {:found-variants false :is-variant false})
