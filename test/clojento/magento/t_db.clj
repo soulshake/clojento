@@ -95,11 +95,11 @@
             (run-query (:db @system) :product-entities [-1]) => []
             (run-query (:db @system) :product-entities [[-1 -2]]) => [])
       (fact "get product with id 1 (as simple param or list)"
-            (first (run-query (:db @system) :product-entities [ 1 ])) => (contains {:id 1 :sku "sku-1" :type "simple" :attribute-set 4 :date-created anything :date-updated anything})
-            (first (run-query (:db @system) :product-entities [[1]])) => (contains {:id 1 :sku "sku-1" :type "simple" :attribute-set 4 :date-created anything :date-updated anything}))
+            (first (run-query (:db @system) :product-entities [ 1 ])) => (just {:id 1 :sku "sku-1" :type "simple" :attribute-set 4 :date-created anything :date-updated anything})
+            (first (run-query (:db @system) :product-entities [[1]])) => (just {:id 1 :sku "sku-1" :type "simple" :attribute-set 4 :date-created anything :date-updated anything}))
       (fact "get multiple products"
-            (run-query (:db @system) :product-entities [[1 2]])   => (contains (contains {:id 1}) (contains {:id 2}))
-            (run-query (:db @system) :product-entities [[3 2 1]]) => (contains (contains {:id 1}) (contains {:id 2}))))
+            (run-query (:db @system) :product-entities [[1 2]])   => (just [(contains {:id 1}) (contains {:id 2})] :in-any-order)
+            (run-query (:db @system) :product-entities [[3 2 1]]) => (just [(contains {:id 1}) (contains {:id 2}) (contains {:id 3})] :in-any-order)))
 
     (facts "query :product-websites"
       (fact "get missing product(s)"
@@ -119,9 +119,9 @@
                                                                      {:id 1 :website-id 2 :stock-id 1 :qty 0.0000M :stock-status 0}] :in-any-order)))
 
     (facts "query :product-attributes-varchar"
-      (fact "get missing product(s)"
+      (fact "get missing product"
             (run-query (:db @system) :product-attributes-varchar [-1]) => [])
-      (fact "get product with id 1 (as simple param or list)"
+      (fact "get product with id 1"
             (run-query (:db @system) :product-attributes-varchar [1]) => (just [{:id 1 :attribute-id 60 :store-id 0 :value "Simple Product 1"}
                                                                                 {:id 1 :attribute-id 71 :store-id 0 :value nil}
                                                                                 {:id 1 :attribute-id 73 :store-id 0 :value "This is the simple product with id 1"}] :in-any-order)))
