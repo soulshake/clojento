@@ -27,10 +27,11 @@
   (result-set-read-column [v _2 _3 _4]
     (org.joda.time.DateTime. v)))
 
-; TODO write tests for this
 (extend-protocol proto/ISQLType
   org.joda.time.DateTime
-  (tc/to-sql-time [v _] v))
+  (set-stmt-parameter! [v conn stmt index]
+    (.setObject stmt index (proto/as-sql-type v conn)))
+  (as-sql-type [v _] (tc/to-sql-time v)))
 
 ; ------------------------------------------------------------------------------
 

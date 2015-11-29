@@ -1,6 +1,7 @@
 (ns clojento.magento.t_db
   (:require [midje.sweet :refer :all]
             [clojento.magento.db :refer :all]
+            [clj-time.core :as t]
             [clojure.java.io :as io]
             [clojure.tools.logging :as log]
             [com.stuartsierra.component :as component]))
@@ -63,6 +64,17 @@
     (fact "meta contains :time > 0"
           (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check" :debug true)) => (contains {:time pos?})
           (meta (raw-jdbc-execute (:db @system) "CREATE TABLE new_tbl;" :debug true))  => (contains {:time pos?}))
+    (fact "converts org.joda.time.DateTime to java.sql.Timestamp"
+          (let [create-table (str "CREATE TABLE `table_with_datetime` ( "
+                                  "`id` int(11) NOT NULL AUTO_INCREMENT, "
+                                  "`value` datetime DEFAULT NOT NULL, "
+                                  "PRIMARY KEY (`id`) "
+                                  ") ENGINE=InnoDB DEFAULT CHARSET=utf8;")
+                insert-query (str "INSERT INTO `table_with_datetime` (`value`) "
+                                  "VALUES (?);")]
+            (do
+              (raw-jdbc-execute (:db @system) create-table)
+              (raw-jdbc-execute (:db @system) [insert-query (t/now)])) =not=> (throws java.lang.Exception)))
     (log/info "completed tests with in-memory DB")))
 
 
