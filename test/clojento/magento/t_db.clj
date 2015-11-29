@@ -45,25 +45,25 @@
 
 ; ------------------------------------------------------------------------------
 
-; TODO wrap in (facts ...), maybe?
-(with-state-changes [(before :facts (reset! system (fresh-system (fn []) db-config-in-memory)))
-                     (after  :facts (component/stop @system))]
-  (log/info "starting tests with in-memory DB")
-  (fact "db exists"
-        (first (run-query (:db @system) :check [])) => {:check "passed"})
-  (fact "meta on query result only when requested"
-        (meta (run-query (:db @system) :check [] :debug true)) =not=> nil
-        (meta (run-query (:db @system) :check [])) => nil
-        (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check")) => nil
-        (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check" :debug true)) =not=> nil)
-  (fact "meta contains :stmt"
-        (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check" :debug true)) => (contains {:stmt "SELECT 'passed' as check"}))
-  (fact "meta contains :hits"
-        (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check" :debug true)) => (contains {:hits 1}))
-  (fact "meta contains :time > 0"
-        (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check" :debug true)) => (contains {:time pos?})
-        (meta (raw-jdbc-execute (:db @system) "CREATE TABLE new_tbl;" :debug true))  => (contains {:time pos?}))
-  (log/info "completed tests with in-memory DB"))
+(facts "with in-memory DB"
+  (with-state-changes [(before :facts (reset! system (fresh-system (fn []) db-config-in-memory)))
+                       (after  :facts (component/stop @system))]
+    (log/info "starting tests with in-memory DB")
+    (fact "db exists"
+          (first (run-query (:db @system) :check [])) => {:check "passed"})
+    (fact "meta on query result only when requested"
+          (meta (run-query (:db @system) :check [] :debug true)) =not=> nil
+          (meta (run-query (:db @system) :check [])) => nil
+          (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check")) => nil
+          (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check" :debug true)) =not=> nil)
+    (fact "meta contains :stmt"
+          (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check" :debug true)) => (contains {:stmt "SELECT 'passed' as check"}))
+    (fact "meta contains :hits"
+          (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check" :debug true)) => (contains {:hits 1}))
+    (fact "meta contains :time > 0"
+          (meta (raw-jdbc-fetch (:db @system) "SELECT 'passed' as check" :debug true)) => (contains {:time pos?})
+          (meta (raw-jdbc-execute (:db @system) "CREATE TABLE new_tbl;" :debug true))  => (contains {:time pos?}))
+    (log/info "completed tests with in-memory DB")))
 
 
 (def write-query (str
