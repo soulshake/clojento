@@ -102,7 +102,9 @@
                                                                             (contains {:id 2})] :in-any-order)
             (run-query (:db @system) :product-entities [[3 2 1]]) => (just [(contains {:id 1})
                                                                             (contains {:id 2})
-                                                                            (contains {:id 3})] :in-any-order)))
+                                                                            (contains {:id 3})] :in-any-order))
+      (fact "type of date-created"
+            (type (:date-created (first (run-query (:db @system) :product-entities [1])))) => org.joda.time.DateTime))
 
     (facts "query :product-websites"
       (fact "get missing product(s)"

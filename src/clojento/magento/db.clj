@@ -1,12 +1,38 @@
 (ns clojento.magento.db
-  (:require [com.stuartsierra.component :as component]
+  (:require [clj-time.coerce :as tc]
             [clojento.config :as config]
             [clojure.tools.logging :as log]
+            [com.stuartsierra.component :as component]
             [hikari-cp.core :as hikari]
             [jdbc.core :as jdbc]
+            [jdbc.proto :as proto]
             [yesqueries.core :as yq]))
 
 (log/debug "loading clojento.magento.db namespace")
+
+; ------------------------------------------------------------------------------
+; convert java.sql.Timestamp <=> org.joda.time.DateTime
+; see https://github.com/clj-time/clj-time/blob/master/src/clj_time/jdbc.clj
+; and https://github.com/funcool/clojure.jdbc/blob/master/src/jdbc/proto.clj
+; and https://github.com/funcool/clojure.jdbc/blob/master/src/jdbc/impl.clj
+
+(extend-protocol proto/ISQLResultSetReadColumn
+  java.sql.Timestamp
+  (from-sql-type [v _2 _3 _4]
+    (tc/from-sql-time v))
+  java.sql.Date
+  (from-sql-type [v _2 _3 _4]
+    (tc/from-sql-date v))
+  java.sql.Time
+  (result-set-read-column [v _2 _3 _4]
+    (org.joda.time.DateTime. v)))
+
+; TODO write tests for this
+(extend-protocol proto/ISQLType
+  org.joda.time.DateTime
+  (tc/to-sql-time [v _] v))
+
+; ------------------------------------------------------------------------------
 
 ; see https://github.com/tomekw/hikari-cp
 ; all time values are specified in milliseconds
