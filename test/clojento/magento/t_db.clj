@@ -239,8 +239,8 @@
                                                           :type          "simple"
                                                           :sku           "sku-1"
                                                           :attribute-set 4
-                                                          :date-created  anything
-                                                          :date-updated  anything
+                                                          :date-created  (t/date-time 2011 11 21 22 02 58)
+                                                          :date-updated  (t/date-time 2013 11 14 18 17 49)
                                                           ; :websites      (just ["website_1" "website_2"] :in-any-order)
                                                           }]))
       (fact "has meta"
