@@ -16,6 +16,8 @@
 ; and https://github.com/funcool/clojure.jdbc/blob/master/src/jdbc/proto.clj
 ; and https://github.com/funcool/clojure.jdbc/blob/master/src/jdbc/impl.clj
 
+; TODO pull request for doc at http://funcool.github.io/clojure.jdbc/latest/#extend-sql-types
+
 (extend-protocol proto/ISQLResultSetReadColumn
   java.sql.Timestamp
   (from-sql-type [v _2 _3 _4]
