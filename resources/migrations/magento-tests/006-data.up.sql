@@ -65,12 +65,12 @@ VALUES
 
 INSERT INTO `catalog_product_entity` (`entity_id`, `entity_type_id`, `attribute_set_id`, `type_id`, `sku`, `has_options`, `required_options`, `created_at`, `updated_at`, `activation_date`, `expiry_date`)
 VALUES
-  (1, 4, 4, 'simple',       'sku-1',   0, 0, '2011-11-21 14:02:58', '2013-11-14 10:17:49', NULL, NULL),
-  (2, 4, 4, 'configurable', 'sku-2',   1, 1, '2011-11-21 14:04:03', '2012-02-23 16:38:05', NULL, NULL),
-  (3, 4, 4, 'simple',       'sku-2.1', 0, 0, '2011-11-21 14:04:00', '2012-02-23 16:38:00', NULL, NULL),
-  (4, 4, 4, 'simple',       'sku-2.2', 0, 0, '2011-11-21 14:04:01', '2012-02-23 16:38:01', NULL, NULL),
-  (5, 4, 4, 'simple',       'sku-2.3', 0, 0, '2011-11-21 14:04:02', '2012-02-23 16:38:02', NULL, NULL),
-  (6, 4, 4, 'configurable', 'sku-6',   0, 0, '2011-11-21 14:05:00', '2012-02-23 16:39:00', NULL, NULL);
+  (1, 4, 4, 'simple',       'sku-1',   0, 0, '2011-11-21 14:02:58+00:00', '2013-11-14 10:17:49+00:00', NULL, NULL),
+  (2, 4, 4, 'configurable', 'sku-2',   1, 1, '2011-11-21 14:04:03+00:00', '2012-02-23 16:38:05+00:00', NULL, NULL),
+  (3, 4, 4, 'simple',       'sku-2.1', 0, 0, '2011-11-21 14:04:00+00:00', '2012-02-23 16:38:00+00:00', NULL, NULL),
+  (4, 4, 4, 'simple',       'sku-2.2', 0, 0, '2011-11-21 14:04:01+00:00', '2012-02-23 16:38:01+00:00', NULL, NULL),
+  (5, 4, 4, 'simple',       'sku-2.3', 0, 0, '2011-11-21 14:04:02+00:00', '2012-02-23 16:38:02+00:00', NULL, NULL),
+  (6, 4, 4, 'configurable', 'sku-6',   0, 0, '2011-11-21 14:05:00+00:00', '2012-02-23 16:39:00+00:00', NULL, NULL);
 
 --;;
 
@@ -124,8 +124,8 @@ VALUES
 
 INSERT INTO `catalog_product_entity_datetime` (`entity_type_id`, `attribute_id`, `store_id`, `entity_id`, `value`)
 VALUES
-  (4, 66, 1, 1, '2015-06-26 12:02:57'),
-  (4, 67, 1, 1, '2015-07-01 13:35:47');
+  (4, 66, 1, 1, '2015-06-26 12:02:57+00:00'),
+  (4, 67, 1, 1, '2015-07-01 13:35:47+00:00');
 
 -- required for mysql:
 -- SET GLOBAL sql_mode='';
