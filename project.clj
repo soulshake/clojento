@@ -7,6 +7,8 @@
                  [org.clojure/tools.logging "0.3.1"]
                  [ch.qos.logback/logback-classic "1.1.3"]
                  [clj-time "0.11.0"]
+                 [com.layerware/hugsql-core "0.3.1"]
+                 [com.layerware/hugsql-adapter-clojure-jdbc "0.3.1"]
                  [com.stuartsierra/component "0.3.0"]
                  [funcool/clojure.jdbc "0.6.1"]
                  [hikari-cp "1.4.0"]
