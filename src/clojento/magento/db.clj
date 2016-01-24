@@ -4,11 +4,18 @@
             [clojure.tools.logging :as log]
             [com.stuartsierra.component :as component]
             [hikari-cp.core :as hikari]
+            [hugsql.core :as hugsql]
+            [hugsql.adapter.clojure-jdbc :as cj-adapter]
             [jdbc.core :as jdbc]
             [jdbc.proto :as proto]
             [yesqueries.core :as yq]))
 
 (log/debug "loading clojento.magento.db namespace")
+
+; ------------------------------------------------------------------------------
+; set global default adapter
+
+(hugsql/set-adapter! (cj-adapter/hugsql-adapter-clojure-jdbc))
 
 ; ------------------------------------------------------------------------------
 ; convert java.sql.Timestamp <=> org.joda.time.DateTime

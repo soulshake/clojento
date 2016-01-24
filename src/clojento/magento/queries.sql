@@ -1,12 +1,3 @@
--- name: check
--- no comment
-SELECT 'passed' as check
-
--- name: websites
--- no comment
-SELECT website_id as id, code
-FROM core_website
-
 -- name: stores
 -- no comment
 SELECT store_id as id, code

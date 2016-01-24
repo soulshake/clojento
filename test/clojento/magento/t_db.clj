@@ -1,6 +1,7 @@
 (ns clojento.magento.t_db
   (:require [midje.sweet :refer :all]
             [clojento.magento.db :refer :all]
+            [clojento.magento.db.core :as db-core]
             [clj-time.core :as t]
             [clojure.java.io :as io]
             [clojure.tools.logging :as log]
@@ -58,10 +59,11 @@
 (with-state-changes [(before :facts (setup-in-memory-db))
                      (after  :facts (teardown-in-memory-db))]
   (fact "db exists"
-        (first (run-query (:db @test-system) :check [])) => {:check "passed"})
+        (db-core/check (:db @test-system)) => {:check "passed"})
+  (future-fact "add meta to generated functions"
+        (meta (db-core/check (:db @test-system) {} {:debug true})) =not=> nil
+        (meta (db-core/check (:db @test-system))) => nil)
   (fact "meta on query result only when requested"
-        (meta (run-query (:db @test-system) :check [] :debug true)) =not=> nil
-        (meta (run-query (:db @test-system) :check [])) => nil
         (meta (raw-jdbc-fetch (:db @test-system) "SELECT 'passed' as check")) => nil
         (meta (raw-jdbc-fetch (:db @test-system) "SELECT 'passed' as check" :debug true)) =not=> nil)
   (fact "meta contains :stmt"
@@ -113,8 +115,8 @@
       (fact "db contains 3 websites (admin + 2) and 2 stores"
             (count (raw-jdbc-fetch (:db @test-system) "SELECT * FROM core_website;")) => 3
             (count (raw-jdbc-fetch (:db @test-system) "SELECT * FROM core_store;")) => 2
-            (count (run-query (:db @test-system) :websites [])) => 3
-            (count (run-query (:db @test-system) :websites [] :debug true)) => 3)
+            (count (db-core/websites (:db @test-system))) => 3
+            (count (db-core/websites (:db @test-system) {} {:debug true})) => 3)
       (fact "meta contains :hits"
             (meta (raw-jdbc-fetch (:db @test-system) "SELECT * FROM core_website;"  :debug true)) => (contains {:hits 3})))
 
