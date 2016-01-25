@@ -13,6 +13,7 @@
   ;)
 
   (:require [com.stuartsierra.component :as component]
+            [clojure.tools.logging :as log]
             [clojure.tools.namespace.repl :refer [refresh refresh-all]]
             [clojento.logback :as logback]
             [clojento.core :as app]
