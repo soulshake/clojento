@@ -49,8 +49,8 @@
   (let [unique (gensym)
         path   (str "./data/test-db-" unique)]
     {:path path
-     :rw (str "jdbc:h2:file:" path ";MODE=MySQL")
-     :ro (str "jdbc:h2:file:" path ";MODE=MySQL;ACCESS_MODE_DATA=r")}))
+     :rw (str "jdbc:h2:file:" path ";MODE=MySQL;TRACE_LEVEL_FILE=0;TRACE_LEVEL_SYSTEM_OUT=1")
+     :ro (str "jdbc:h2:file:" path ";MODE=MySQL;TRACE_LEVEL_FILE=0;TRACE_LEVEL_SYSTEM_OUT=1;ACCESS_MODE_DATA=r")}))
 
 (defn test-db-config-ro [test-db-urls]
   {:adapter  "h2"
@@ -64,7 +64,7 @@
 (defn cleanup-db-fixture [path]
   (log/info "deleting database fixture:" path)
   (io/delete-file (str path ".mv.db"))
-  (io/delete-file (str path ".trace.db")))
+  nil)
 
 (defrecord DatabaseFixture [config created]
   component/Lifecycle
