@@ -9,20 +9,9 @@
 
 (log/debug "loading clojento.magento.t_db namespace")
 
-
-
-(def test-db-rw "jdbc:h2:file:./data/test-db;MODE=MySQL")
-(def test-db-ro "jdbc:h2:file:./data/test-db;MODE=MySQL;ACCESS_MODE_DATA=r")
-
-(def db-config-ro
-  {:adapter  "h2"
-   :url      test-db-ro})
-
-(def db-config-in-memory
-  {:adapter  "h2"
-   :url      (str "jdbc:h2:mem:" (gensym))})
-
 ; ------------------------------------------------------------------------------
+
+(def test-system (atom nil))
 
 (defn fresh-system [before-start db-config]
   (before-start)
@@ -30,10 +19,12 @@
                       :configurator (clojento.config/static-configurator {:db db-config}))]
       (component/start system)))
 
-; TODO review (namespace-state-changes)
-; ------------------------------------------------------------------------------
-
-(def test-system (atom nil))
+(def db-config-in-memory
+  {:adapter  "h2"
+   :url      (str "jdbc:h2:mem:" (gensym))
+   :connection-timeout 1000
+   :validation-timeout 1000
+   :maximum-pool-size  3})
 
 (defn setup-in-memory-db []
   (log/info "starting setup: in-memory DB")
@@ -60,7 +51,10 @@
 
 (defn test-db-config-ro [test-db-urls]
   {:adapter  "h2"
-   :url      (:ro test-db-urls)})
+   :url      (:ro test-db-urls)
+   :connection-timeout 1000
+   :validation-timeout 1000
+   :maximum-pool-size  3})
 
 (defn migration-reporter [op id]
   (case op
