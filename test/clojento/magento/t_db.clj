@@ -48,12 +48,15 @@
 (defn gen-db-fixture-config []
   (let [file     (java.io.File/createTempFile "test-db-" ".mv.db")
         absolute (.getAbsolutePath file)
-        path     (subs absolute 0 (- (count absolute) 6))]
+        path     (subs absolute 0 (- (count absolute) 6))
+        trace    (clojure.java.io/file (str path ".trace.db"))]
     (.deleteOnExit file)
+    (.deleteOnExit trace)
     {:file file
      :path path
-     :rw (str "jdbc:h2:file:" path ";MODE=MySQL;TRACE_LEVEL_FILE=0;TRACE_LEVEL_SYSTEM_OUT=1")
-     :ro (str "jdbc:h2:file:" path ";MODE=MySQL;TRACE_LEVEL_FILE=0;TRACE_LEVEL_SYSTEM_OUT=1;ACCESS_MODE_DATA=r")}))
+     :trace trace
+     :rw (str "jdbc:h2:file:" path ";MODE=MySQL;TRACE_LEVEL_FILE=1;TRACE_LEVEL_SYSTEM_OUT=1")
+     :ro (str "jdbc:h2:file:" path ";MODE=MySQL;TRACE_LEVEL_FILE=1;TRACE_LEVEL_SYSTEM_OUT=1;ACCESS_MODE_DATA=r")}))
 
 (defn test-db-config-ro [test-db-urls]
   {:adapter  "h2"
@@ -64,9 +67,10 @@
     :up   (log/debug "Applying" id)
     :down (log/debug "Rolling back" id)))
 
-(defn cleanup-db-fixture [file]
-  (log/info "deleting temporaray test database: " (.getAbsolutePath file))
-  (io/delete-file file))
+(defn cleanup-db-fixture [config]
+  (log/info "deleting temporaray test database: " (:path config))
+  (io/delete-file (:trace config) true)
+  (io/delete-file (:file config)))
 
 (defrecord DatabaseFixture [config created]
   component/Lifecycle
@@ -88,7 +92,7 @@
     (if (not created) ; already stopped
       this
       (do
-        (cleanup-db-fixture (:file config))
+        (cleanup-db-fixture config)
         (assoc this :created false)))))
 
 (defn new-db-fixture []
