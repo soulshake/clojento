@@ -46,9 +46,12 @@
 ; ------------------------------------------------------------------------------
 
 (defn gen-db-fixture-config []
-  (let [unique (gensym)
-        path   (str "./data/test-db-" unique)]
-    {:path path
+  (let [file     (java.io.File/createTempFile "test-db-" ".mv.db")
+        absolute (.getAbsolutePath file)
+        path     (subs absolute 0 (- (count absolute) 6))]
+    (.deleteOnExit file)
+    {:file file
+     :path path
      :rw (str "jdbc:h2:file:" path ";MODE=MySQL;TRACE_LEVEL_FILE=0;TRACE_LEVEL_SYSTEM_OUT=1")
      :ro (str "jdbc:h2:file:" path ";MODE=MySQL;TRACE_LEVEL_FILE=0;TRACE_LEVEL_SYSTEM_OUT=1;ACCESS_MODE_DATA=r")}))
 
@@ -61,10 +64,9 @@
     :up   (log/debug "Applying" id)
     :down (log/debug "Rolling back" id)))
 
-(defn cleanup-db-fixture [path]
-  (log/info "deleting database fixture:" path)
-  (io/delete-file (str path ".mv.db"))
-  nil)
+(defn cleanup-db-fixture [file]
+  (log/info "deleting temporaray test database: " (.getAbsolutePath file))
+  (io/delete-file file))
 
 (defrecord DatabaseFixture [config created]
   component/Lifecycle
@@ -86,7 +88,7 @@
     (if (not created) ; already stopped
       this
       (do
-        (cleanup-db-fixture (:path config))
+        (cleanup-db-fixture (:file config))
         (assoc this :created false)))))
 
 (defn new-db-fixture []
