@@ -124,27 +124,13 @@
 
 ; ------------------------------------------------------------------------------
 
-(defn get-variants-info [db query-id & {:keys [debug] :or {debug false}}]
-  (let [q-result             (run-query db :variants [query-id query-id] :debug debug)
-        q-meta               (meta q-result)
-        grouped-by-parent    (group-by :product_id q-result)
-        found-variants       (contains? grouped-by-parent query-id)
-        product-with-variant (first q-result)]
-    (if found-variants
-      (with-meta {:is-variant false :found-variants true :variant-ids (map :variant_id (get grouped-by-parent query-id))} q-meta)
-      (if (nil? product-with-variant)
-        (with-meta {:is-variant false :found-variants false} q-meta)
-        (with-meta {:is-variant true  :found-variants false :product-id (:product_id product-with-variant)} q-meta)))))
-
-; ------------------------------------------------------------------------------
-
 (defn combine-queries-meta [queries]
   (let [queries-meta (map meta queries)]
     {:queries queries-meta :time (reduce + (map :time queries-meta))}))
 
 ; ------------------------------------------------------------------------------
 
-(defn get-product-data [db query-id & {:keys [debug] :or {debug false}}]
+#_(defn get-product-data [db query-id & {:keys [debug] :or {debug false}}]
   (let [starttime          (System/nanoTime)
         q-variants-info    (get-variants-info db query-id :debug debug)
         is-variant         (:is-variant q-variants-info)

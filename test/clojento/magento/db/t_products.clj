@@ -2,7 +2,7 @@
   (:require [midje.sweet :refer :all]
             [clojento.magento.db :as db]
             [clojento.magento.t_db :as t_db]
-            [clojento.magento.db.products :as db-products]
+            [clojento.magento.db.products :refer :all]
             [clj-time.core :as t]
             [clojure.tools.logging :as log]))
 
@@ -15,100 +15,101 @@
 (facts "query product-entities"
   (with-state-changes [(around :facts (with-open [conn (db/connection (:db @test-system))] ?form))]
     (fact "get missing product(s)"
-          (db-products/product-entities conn {:product-ids [-1 -2]}) => [])
+          (product-entities conn {:product-ids [-1 -2]}) => [])
     (fact "get product with id 1"
-          (first (db-products/product-entities conn {:product-ids [1]})) => (just {:id 1 :sku "sku-1" :type "simple" :attribute-set 4 :date-created anything :date-updated anything}))
+          (first (product-entities conn {:product-ids [1]})) => (just {:id 1 :sku "sku-1" :type "simple" :attribute-set 4 :date-created anything :date-updated anything}))
     (fact "get multiple products"
-          (db-products/product-entities conn {:product-ids [1 2]}) => (just [(contains {:id 1})
-                                                                             (contains {:id 2})] :in-any-order)
-          (db-products/product-entities conn {:product-ids [1 2 3]}) => (just [(contains {:id 1})
-                                                                               (contains {:id 2})
-                                                                               (contains {:id 3})] :in-any-order))
+          (product-entities conn {:product-ids [1 2]}) => (just [(contains {:id 1})
+                                                                 (contains {:id 2})] :in-any-order)
+          (product-entities conn {:product-ids [1 2 3]}) => (just [(contains {:id 1})
+                                                                   (contains {:id 2})
+                                                                   (contains {:id 3})] :in-any-order))
     (fact "type of date-created"
-          (type (:date-created (first (db-products/product-entities conn {:product-ids [1]})))) => org.joda.time.DateTime)))
+          (type (:date-created (first (product-entities conn {:product-ids [1]})))) => org.joda.time.DateTime)))
 
 (facts "query product-websites"
   (with-state-changes [(around :facts (with-open [conn (db/connection (:db @test-system))] ?form))]
     (fact "get missing product(s)"
-          (db-products/product-websites conn {:product-ids [-1 -2]}) => [])
+          (product-websites conn {:product-ids [-1 -2]}) => [])
     (fact "get product with id 1"
-          (db-products/product-websites conn {:product-ids [1]}) => (just [{:id 1 :website-id 1}
-                                                                           {:id 1 :website-id 2}] :in-any-order))
+          (product-websites conn {:product-ids [1]}) => (just [{:id 1 :website-id 1}
+                                                               {:id 1 :website-id 2}] :in-any-order))
     (fact "get multiple products"
-          (db-products/product-websites conn {:product-ids [1 2]}) => (just [{:id 1 :website-id 1}
-                                                                             {:id 1 :website-id 2}
-                                                                             {:id 2 :website-id 1}] :in-any-order)
-          (count (db-products/product-websites conn {:product-ids [3 2 1]})) => 4)))
+          (product-websites conn {:product-ids [1 2]}) => (just [{:id 1 :website-id 1}
+                                                                 {:id 1 :website-id 2}
+                                                                 {:id 2 :website-id 1}] :in-any-order)
+          (count (product-websites conn {:product-ids [3 2 1]})) => 4)))
 
 (facts "query product-stock"
   (with-state-changes [(around :facts (with-open [conn (db/connection (:db @test-system))] ?form))]
     (fact "get missing product"
-          (db-products/product-stock conn {:product-ids [-1]}) => [])
+          (product-stock conn {:product-ids [-1]}) => [])
     (fact "get product with id 1"
-          (db-products/product-stock conn {:product-ids [1]}) => (just [{:id 1 :website-id 1 :stock-id 1 :qty 2.0000M :stock-status 1}
-                                                                        {:id 1 :website-id 2 :stock-id 1 :qty 0.0000M :stock-status 0}] :in-any-order))))
+          (product-stock conn {:product-ids [1]}) => (just [{:id 1 :website-id 1 :stock-id 1 :qty 2.0000M :stock-status 1}
+                                                            {:id 1 :website-id 2 :stock-id 1 :qty 0.0000M :stock-status 0}] :in-any-order))))
 
 (facts "query product-attributes-varchar"
   (with-state-changes [(around :facts (with-open [conn (db/connection (:db @test-system))] ?form))]
     (fact "get missing product"
-          (db-products/product-attributes-varchar conn {:product-ids [-1]}) => [])
+          (product-attributes-varchar conn {:product-ids [-1]}) => [])
     (fact "get product with id 1"
-          (db-products/product-attributes-varchar conn {:product-ids [1]}) => (just [{:id 1 :attribute-id 60 :store-id 0 :value "Simple Product 1"}
-                                                                                     {:id 1 :attribute-id 71 :store-id 0 :value nil}
-                                                                                     {:id 1 :attribute-id 73 :store-id 0 :value "This is the simple product with id 1"}] :in-any-order))))
+          (product-attributes-varchar conn {:product-ids [1]}) => (just [{:id 1 :attribute-id 60 :store-id 0 :value "Simple Product 1"}
+                                                                         {:id 1 :attribute-id 71 :store-id 0 :value nil}
+                                                                         {:id 1 :attribute-id 73 :store-id 0 :value "This is the simple product with id 1"}] :in-any-order))))
 
 (facts "query product-attributes-text"
   (with-state-changes [(around :facts (with-open [conn (db/connection (:db @test-system))] ?form))]
     (fact "get missing product"
-          (db-products/product-attributes-text conn {:product-ids [-1]}) => [])
+          (product-attributes-text conn {:product-ids [-1]}) => [])
     (fact "get product with id 1"
-          (db-products/product-attributes-text conn {:product-ids [1]}) => (just [(contains {:id 1 :attribute-id 61 :store-id 0 :value anything})                   ; TODO h2 returns a org.h2.jdbc.JdbcClob, .toString == "This is the long description for product 1"
-                                                                                  (contains {:id 1 :attribute-id 62 :store-id 0 :value anything})] :in-any-order)))) ; TODO h2 returns a org.h2.jdbc.JdbcClob, .toString == "This is the short description for product 1"
+          (product-attributes-text conn {:product-ids [1]}) => (just [(contains {:id 1 :attribute-id 61 :store-id 0 :value anything})                   ; TODO h2 returns a org.h2.jdbc.JdbcClob, .toString == "This is the long description for product 1"
+                                                                      (contains {:id 1 :attribute-id 62 :store-id 0 :value anything})] :in-any-order)))) ; TODO h2 returns a org.h2.jdbc.JdbcClob, .toString == "This is the short description for product 1"
 
 (facts "query product-attributes-datetime"
   (with-state-changes [(around :facts (with-open [conn (db/connection (:db @test-system))] ?form))]
     (fact "get missing product"
-          (db-products/product-attributes-datetime conn {:product-ids [-1]}) => [])
+          (product-attributes-datetime conn {:product-ids [-1]}) => [])
     (fact "get product with id 1"
-          (db-products/product-attributes-datetime conn {:product-ids [1]}) => (just [(contains {:id 1 :attribute-id 66 :store-id 1 :value anything})                   ; TODO checking dates
-                                                                                      (contains {:id 1 :attribute-id 67 :store-id 1 :value anything})] :in-any-order)))) ; TODO checking dates
+          (product-attributes-datetime conn {:product-ids [1]}) => (just [(contains {:id 1 :attribute-id 66 :store-id 1 :value anything})                   ; TODO checking dates
+                                                                          (contains {:id 1 :attribute-id 67 :store-id 1 :value anything})] :in-any-order)))) ; TODO checking dates
 
 (facts "query variants"
   (with-state-changes [(around :facts (with-open [conn (db/connection (:db @test-system))] ?form))]
     (fact "get missing product"
-          (db-products/variants conn {:product-ids [-1]}) => [])
+          (variants conn {:product-ids [-1]}) => [])
     (fact "get simple product"
-          (db-products/variants conn {:product-ids [1]}) => [])
+          (variants conn {:product-ids [1]}) => [])
     (fact "get configurable product"
-          (db-products/variants conn {:product-ids [2]}) => (just [{:product_id 2 :variant_id 3}
-                                                                   {:product_id 2 :variant_id 4}
-                                                                   {:product_id 2 :variant_id 5}] :in-any-order))
+          (variants conn {:product-ids [2]}) => (just [{:product_id 2 :variant_id 3}
+                                                       {:product_id 2 :variant_id 4}
+                                                       {:product_id 2 :variant_id 5}] :in-any-order))
     (fact "get variant of configurable product"
-          (db-products/variants conn {:product-ids [3]}) => [{:product_id 2 :variant_id 3}])
+          (variants conn {:product-ids [3]}) => [{:product_id 2 :variant_id 3}])
     (fact "get configurable product without variants"
-          (db-products/variants conn {:product-ids [6]}) => [])
+          (variants conn {:product-ids [6]}) => [])
     (future-fact "get grouped product")
     (future-fact "get bundle product")
     (fact "get multiple products"
-          (db-products/variants conn {:product-ids [1 2 3 6]}) => (just [{:product_id 2 :variant_id 3}
-                                                                         {:product_id 2 :variant_id 4}
-                                                                         {:product_id 2 :variant_id 5}] :in-any-order))))
+          (variants conn {:product-ids [1 2 3 6]}) => (just [{:product_id 2 :variant_id 3}
+                                                             {:product_id 2 :variant_id 4}
+                                                             {:product_id 2 :variant_id 5}] :in-any-order))))
 
 ; ------------------------------------------------------------------------------
 
-(future-facts "get-variants-info"
-              (fact "not found"
-                    (get-variants-info (:db @test-system) -1) => {:found-variants false :is-variant false})
-              (fact "simple product"
-                    (get-variants-info (:db @test-system) 1)  => {:found-variants false :is-variant false})
-              (fact "configurable product"
-                    (get-variants-info (:db @test-system) 2)  => {:found-variants true  :is-variant false :variant-ids [3 4 5]})
-              (fact "variant (child product)"
-                    (get-variants-info (:db @test-system) 3)  => {:found-variants false :is-variant true  :product-id 2})
-              (fact "configurable product without children"
-                    (get-variants-info (:db @test-system) 6)  => {:found-variants false :is-variant false})
-              (fact "has meta"
-                    (meta (get-variants-info (:db @test-system) -1 :debug true)) => (contains {:hits 0})))
+(facts "get-variants-info"
+  (with-state-changes [(around :facts (with-open [conn (db/connection (:db @test-system))] ?form))]
+    (fact "not found"
+          (get-variants-info conn -1) => {:found-variants false :is-variant false})
+    (fact "simple product"
+          (get-variants-info conn 1)  => {:found-variants false :is-variant false})
+    (fact "configurable product"
+          (get-variants-info conn 2)  => {:found-variants true  :is-variant false :variant-ids [3 4 5]})
+    (fact "variant (child product)"
+          (get-variants-info conn 3)  => {:found-variants false :is-variant true  :product-id 2})
+    (fact "configurable product without children"
+          (get-variants-info conn 6)  => {:found-variants false :is-variant false})
+    (future-fact "has meta"
+                 (meta (get-variants-info conn -1 :debug true)) => (contains {:hits 0}))))
 
 (future-facts "get-product-data"
               (fact "found"
