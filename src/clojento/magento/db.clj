@@ -7,8 +7,7 @@
             [hugsql.core :as hugsql]
             [hugsql.adapter.clojure-jdbc :as cj-adapter]
             [jdbc.core :as jdbc]
-            [jdbc.proto :as proto]
-            [yesqueries.core :as yq]))
+            [jdbc.proto :as proto]))
 
 (log/debug "loading clojento.magento.db namespace")
 
@@ -74,8 +73,7 @@
          (if datasource  ; already started
            this
            (assoc this
-                  :datasource (make-datasource configurator)
-                  :queries (yq/load-queries "clojento/magento/queries.sql"))))
+                  :datasource (make-datasource configurator))))
 
   (stop [this]
         (if (not datasource) ; already stopped
@@ -84,8 +82,7 @@
             (log/info "stopping connection pool")
             (hikari/close-datasource datasource)
             (assoc this
-                   :datasource nil
-                   :queries nil)))))
+                   :datasource nil)))))
 
 ; PUBLIC API
 
@@ -119,10 +116,11 @@
 ; ------------------------------------------------------------------------------
 
 (defn run-query [db query-name params & {:keys [debug] :or {debug false}}]
-  (let [q (get (:queries db) query-name)
+  #_(let [q (get (:queries db) query-name)
         stmt (yq/sqlvec-raw (:split q) params)]
     (log/debug "fetching " stmt)
-    (raw-jdbc-fetch db stmt :debug debug)))
+    (raw-jdbc-fetch db stmt :debug debug))
+  nil)
 
 ; ------------------------------------------------------------------------------
 

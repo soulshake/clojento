@@ -30,8 +30,6 @@
 
 ; TODO make meta optional
 (defn load-product [magento product-id]
-  (let [db (:db magento)
-        p (clojento.magento.db/run-query db :product-by-id [product-id])]
-    (with-meta {:id product-id} {:queries [{:sql "foo" :hits 3 :time 2} {:sql "bar" :hits 5 :time 31}] :total_time 33 })))
+  "TODO")
 
 ;(defn load-product-or-variant [magento product-or-variant-id] "TODO")
