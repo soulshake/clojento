@@ -93,12 +93,11 @@
   "Database component requires a Configurator component"
   (map->Database {}))
 
-(defn get-connection
-  [params]
-  ())
+(defn connection [db]
+  (jdbc/connection (:datasource db)))
 
 (defn raw-jdbc-execute [db stmt-or-sqlvec & {:keys [debug] :or {debug false}}]
-  (with-open [conn (jdbc/connection (:datasource db))]
+  (with-open [conn (connection db)]
     (let [starttime (System/nanoTime)
           result (jdbc/execute conn stmt-or-sqlvec)]
       (if debug
@@ -108,7 +107,7 @@
         result))))
 
 (defn raw-jdbc-fetch [db stmt-or-sqlvec & {:keys [debug] :or {debug false}}]
-  (with-open [conn (jdbc/connection (:datasource db))]
+  (with-open [conn (connection db)]
     (let [starttime (System/nanoTime)
           result (jdbc/fetch conn stmt-or-sqlvec)]
       (if debug
