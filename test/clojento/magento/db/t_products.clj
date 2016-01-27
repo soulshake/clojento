@@ -13,76 +13,65 @@
 ; ------------------------------------------------------------------------------
 
 (facts "query product-entities"
-  (fact "get missing product(s)"
-        (with-open [conn (db/connection (:db @test-system))]
-          (db-products/product-entities conn {:product-ids [-1 -2]})) => [])
-  (fact "get product with id 1"
-        (with-open [conn (db/connection (:db @test-system))]
-          (first (db-products/product-entities conn {:product-ids [1]}))) => (just {:id 1 :sku "sku-1" :type "simple" :attribute-set 4 :date-created anything :date-updated anything}))
-  (fact "get multiple products"
-        (with-open [conn (db/connection (:db @test-system))]
-          (db-products/product-entities conn {:product-ids [1 2]})) => (just [(contains {:id 1})
-                                                                              (contains {:id 2})] :in-any-order)
-        (with-open [conn (db/connection (:db @test-system))]
-          (db-products/product-entities conn {:product-ids [1 2 3]})) => (just [(contains {:id 1})
-                                                                                (contains {:id 2})
-                                                                                (contains {:id 3})] :in-any-order))
-  (fact "type of date-created"
-        (with-open [conn (db/connection (:db @test-system))]
-          (type (:date-created (first (db-products/product-entities conn {:product-ids [1]}))))) => org.joda.time.DateTime))
+  (with-state-changes [(around :facts (with-open [conn (db/connection (:db @test-system))] ?form))]
+    (fact "get missing product(s)"
+          (db-products/product-entities conn {:product-ids [-1 -2]}) => [])
+    (fact "get product with id 1"
+          (first (db-products/product-entities conn {:product-ids [1]})) => (just {:id 1 :sku "sku-1" :type "simple" :attribute-set 4 :date-created anything :date-updated anything}))
+    (fact "get multiple products"
+          (db-products/product-entities conn {:product-ids [1 2]}) => (just [(contains {:id 1})
+                                                                             (contains {:id 2})] :in-any-order)
+          (db-products/product-entities conn {:product-ids [1 2 3]}) => (just [(contains {:id 1})
+                                                                               (contains {:id 2})
+                                                                               (contains {:id 3})] :in-any-order))
+    (fact "type of date-created"
+          (type (:date-created (first (db-products/product-entities conn {:product-ids [1]})))) => org.joda.time.DateTime)))
 
 (facts "query product-websites"
-  (fact "get missing product(s)"
-        (with-open [conn (db/connection (:db @test-system))]
-          (db-products/product-websites conn {:product-ids [-1 -2]})) => [])
-  (fact "get product with id 1"
-        (with-open [conn (db/connection (:db @test-system))]
-          (db-products/product-websites conn {:product-ids [1]})) => (just [{:id 1 :website-id 1}
-                                                                            {:id 1 :website-id 2}] :in-any-order))
-  (fact "get multiple products"
-        (with-open [conn (db/connection (:db @test-system))]
-          (db-products/product-websites conn {:product-ids [1 2]})) => (just [{:id 1 :website-id 1}
-                                                                              {:id 1 :website-id 2}
-                                                                              {:id 2 :website-id 1}] :in-any-order)
-        (with-open [conn (db/connection (:db @test-system))]
-          (count (db-products/product-websites conn {:product-ids [3 2 1]}))) => 4))
+  (with-state-changes [(around :facts (with-open [conn (db/connection (:db @test-system))] ?form))]
+    (fact "get missing product(s)"
+          (db-products/product-websites conn {:product-ids [-1 -2]}) => [])
+    (fact "get product with id 1"
+          (db-products/product-websites conn {:product-ids [1]}) => (just [{:id 1 :website-id 1}
+                                                                           {:id 1 :website-id 2}] :in-any-order))
+    (fact "get multiple products"
+          (db-products/product-websites conn {:product-ids [1 2]}) => (just [{:id 1 :website-id 1}
+                                                                             {:id 1 :website-id 2}
+                                                                             {:id 2 :website-id 1}] :in-any-order)
+          (count (db-products/product-websites conn {:product-ids [3 2 1]})) => 4)))
 
 (facts "query product-stock"
-  (fact "get missing product"
-        (with-open [conn (db/connection (:db @test-system))]
-          (db-products/product-stock conn {:product-ids [-1]})) => [])
-  (fact "get product with id 1"
-        (with-open [conn (db/connection (:db @test-system))]
-          (db-products/product-stock conn {:product-ids [1]})) => (just [{:id 1 :website-id 1 :stock-id 1 :qty 2.0000M :stock-status 1}
-                                                                         {:id 1 :website-id 2 :stock-id 1 :qty 0.0000M :stock-status 0}] :in-any-order)))
+  (with-state-changes [(around :facts (with-open [conn (db/connection (:db @test-system))] ?form))]
+    (fact "get missing product"
+          (db-products/product-stock conn {:product-ids [-1]}) => [])
+    (fact "get product with id 1"
+          (db-products/product-stock conn {:product-ids [1]}) => (just [{:id 1 :website-id 1 :stock-id 1 :qty 2.0000M :stock-status 1}
+                                                                        {:id 1 :website-id 2 :stock-id 1 :qty 0.0000M :stock-status 0}] :in-any-order))))
 
 (facts "query product-attributes-varchar"
-  (fact "get missing product"
-        (with-open [conn (db/connection (:db @test-system))]
-          (db-products/product-attributes-varchar conn {:product-ids [-1]})) => [])
-  (fact "get product with id 1"
-        (with-open [conn (db/connection (:db @test-system))]
-          (db-products/product-attributes-varchar conn {:product-ids [1]})) => (just [{:id 1 :attribute-id 60 :store-id 0 :value "Simple Product 1"}
-                                                                                      {:id 1 :attribute-id 71 :store-id 0 :value nil}
-                                                                                      {:id 1 :attribute-id 73 :store-id 0 :value "This is the simple product with id 1"}] :in-any-order)))
+  (with-state-changes [(around :facts (with-open [conn (db/connection (:db @test-system))] ?form))]
+    (fact "get missing product"
+          (db-products/product-attributes-varchar conn {:product-ids [-1]}) => [])
+    (fact "get product with id 1"
+          (db-products/product-attributes-varchar conn {:product-ids [1]}) => (just [{:id 1 :attribute-id 60 :store-id 0 :value "Simple Product 1"}
+                                                                                     {:id 1 :attribute-id 71 :store-id 0 :value nil}
+                                                                                     {:id 1 :attribute-id 73 :store-id 0 :value "This is the simple product with id 1"}] :in-any-order))))
 
 (facts "query product-attributes-text"
-  (fact "get missing product"
-        (with-open [conn (db/connection (:db @test-system))]
-          (db-products/product-attributes-text conn {:product-ids [-1]})) => [])
-  (fact "get product with id 1"
-        (with-open [conn (db/connection (:db @test-system))]
-          (db-products/product-attributes-text conn {:product-ids [1]})) => (just [(contains {:id 1 :attribute-id 61 :store-id 0 :value anything})                   ; TODO h2 returns a org.h2.jdbc.JdbcClob, .toString == "This is the long description for product 1"
-                                                                                   (contains {:id 1 :attribute-id 62 :store-id 0 :value anything})] :in-any-order))) ; TODO h2 returns a org.h2.jdbc.JdbcClob, .toString == "This is the short description for product 1"
+  (with-state-changes [(around :facts (with-open [conn (db/connection (:db @test-system))] ?form))]
+    (fact "get missing product"
+          (db-products/product-attributes-text conn {:product-ids [-1]}) => [])
+    (fact "get product with id 1"
+          (db-products/product-attributes-text conn {:product-ids [1]}) => (just [(contains {:id 1 :attribute-id 61 :store-id 0 :value anything})                   ; TODO h2 returns a org.h2.jdbc.JdbcClob, .toString == "This is the long description for product 1"
+                                                                                  (contains {:id 1 :attribute-id 62 :store-id 0 :value anything})] :in-any-order)))) ; TODO h2 returns a org.h2.jdbc.JdbcClob, .toString == "This is the short description for product 1"
 
 (facts "query product-attributes-datetime"
-  (fact "get missing product"
-        (with-open [conn (db/connection (:db @test-system))]
-          (db-products/product-attributes-datetime conn {:product-ids [-1]})) => [])
-  (fact "get product with id 1"
-        (with-open [conn (db/connection (:db @test-system))]
-          (db-products/product-attributes-datetime conn {:product-ids [1]})) => (just [(contains {:id 1 :attribute-id 66 :store-id 1 :value anything})                   ; TODO checking dates
-                                                                                       (contains {:id 1 :attribute-id 67 :store-id 1 :value anything})] :in-any-order))) ; TODO checking dates
+  (with-state-changes [(around :facts (with-open [conn (db/connection (:db @test-system))] ?form))]
+    (fact "get missing product"
+          (db-products/product-attributes-datetime conn {:product-ids [-1]}) => [])
+    (fact "get product with id 1"
+          (db-products/product-attributes-datetime conn {:product-ids [1]}) => (just [(contains {:id 1 :attribute-id 66 :store-id 1 :value anything})                   ; TODO checking dates
+                                                                                      (contains {:id 1 :attribute-id 67 :store-id 1 :value anything})] :in-any-order)))) ; TODO checking dates
 
 ; ------------------------------------------------------------------------------
 
