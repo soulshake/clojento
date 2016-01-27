@@ -73,6 +73,27 @@
           (db-products/product-attributes-datetime conn {:product-ids [1]}) => (just [(contains {:id 1 :attribute-id 66 :store-id 1 :value anything})                   ; TODO checking dates
                                                                                       (contains {:id 1 :attribute-id 67 :store-id 1 :value anything})] :in-any-order)))) ; TODO checking dates
 
+(facts "query variants"
+  (with-state-changes [(around :facts (with-open [conn (db/connection (:db @test-system))] ?form))]
+    (fact "get missing product"
+          (db-products/variants conn {:product-ids [-1]}) => [])
+    (fact "get simple product"
+          (db-products/variants conn {:product-ids [1]}) => [])
+    (fact "get configurable product"
+          (db-products/variants conn {:product-ids [2]}) => (just [{:product_id 2 :variant_id 3}
+                                                                   {:product_id 2 :variant_id 4}
+                                                                   {:product_id 2 :variant_id 5}] :in-any-order))
+    (fact "get variant of configurable product"
+          (db-products/variants conn {:product-ids [3]}) => [{:product_id 2 :variant_id 3}])
+    (fact "get configurable product without variants"
+          (db-products/variants conn {:product-ids [6]}) => [])
+    (future-fact "get grouped product")
+    (future-fact "get bundle product")
+    (fact "get multiple products"
+          (db-products/variants conn {:product-ids [1 2 3 6]}) => (just [{:product_id 2 :variant_id 3}
+                                                                         {:product_id 2 :variant_id 4}
+                                                                         {:product_id 2 :variant_id 5}] :in-any-order))))
+
 ; ------------------------------------------------------------------------------
 
 (future-facts "get-variants-info"

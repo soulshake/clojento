@@ -78,3 +78,9 @@ AND entity_id IN (:v*:product-ids)
 SELECT *
 FROM catalog_product_link
 WHERE product_id IN (:v*:product-ids)
+
+-- :name variants :? :*
+-- :doc find variants of product or if product is a variant (lookup by product id or variant id)
+SELECT l.parent_id as product_id, l.product_id as variant_id
+FROM catalog_product_super_link l
+WHERE l.parent_id IN (:v*:product-ids) OR l.product_id IN (:v*:product-ids)
