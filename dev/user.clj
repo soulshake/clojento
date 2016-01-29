@@ -4,7 +4,6 @@
   ;(:require
   ; [clojure.java.io :as io]
   ; [clojure.java.javadoc :refer [javadoc]]
-  ; [clojure.pprint :refer [pprint]]
   ; [clojure.reflect :refer [reflect]]
   ; [clojure.repl :refer [apropos dir doc find-doc pst source]]
   ; [clojure.set :as set]
@@ -15,9 +14,13 @@
   (:require [com.stuartsierra.component :as component]
             [clojure.tools.logging :as log]
             [clojure.tools.namespace.repl :refer [refresh refresh-all]]
+            [clojure.pprint :refer [pprint] :rename {pprint pp}]
             [clojento.logback :as logback]
             [clojento.core :as app]
             [clojento.magento :as mage]
+            [clojento.magento.db :as mage-db]
+            [clojento.magento.db.products :as mage-db-products]
+            [clojento.magento.t_db :as mage-db-test]
             [ragtime.jdbc]
             [ragtime.repl]
             [midje.repl :refer [autotest]]))
