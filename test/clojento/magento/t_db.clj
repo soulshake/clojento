@@ -5,7 +5,9 @@
             [clj-time.core :as t]
             [clojure.java.io :as io]
             [clojure.tools.logging :as log]
-            [com.stuartsierra.component :as component]))
+            [com.stuartsierra.component :as component]
+            [ragtime.jdbc]
+            [ragtime.repl]))
 
 (log/debug "loading clojento.magento.t_db namespace")
 
