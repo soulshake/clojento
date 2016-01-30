@@ -2,12 +2,10 @@
   (:require [midje.sweet :refer :all]
             [clojento.magento.db :refer :all]
             [clojento.magento.db.core :as db-core]
+            [clojento.utils.db :as db-utils]
             [clj-time.core :as t]
-            [clojure.java.io :as io]
             [clojure.tools.logging :as log]
-            [com.stuartsierra.component :as component]
-            [ragtime.jdbc]
-            [ragtime.repl]))
+            [com.stuartsierra.component :as component]))
 
 (log/debug "loading clojento.magento.t_db namespace")
 
@@ -38,36 +36,6 @@
 
 ; ------------------------------------------------------------------------------
 
-(defn gen-db-fixture-config []
-  (let [file     (java.io.File/createTempFile "test-db-" ".mv.db")
-        absolute (.getAbsolutePath file)
-        path     (subs absolute 0 (- (count absolute) 6))
-        trace    (clojure.java.io/file (str path ".trace.db"))]
-    (.deleteOnExit file)
-    (.deleteOnExit trace)
-    {:file file
-     :path path
-     :trace trace
-     :rw (str "jdbc:h2:file:" path ";MODE=MySQL;TRACE_LEVEL_FILE=1;TRACE_LEVEL_SYSTEM_OUT=1")
-     :ro (str "jdbc:h2:file:" path ";MODE=MySQL;TRACE_LEVEL_FILE=1;TRACE_LEVEL_SYSTEM_OUT=1;ACCESS_MODE_DATA=r")}))
-
-(defn test-db-config-ro [test-db-urls]
-  {:adapter  "h2"
-   :url      (:ro test-db-urls)
-   :connection-timeout 1000
-   :validation-timeout 1000
-   :maximum-pool-size  3})
-
-(defn migration-reporter [op id]
-  (case op
-    :up   (log/debug "Applying" id)
-    :down (log/debug "Rolling back" id)))
-
-(defn cleanup-db-fixture [config]
-  (log/info "deleting temporaray test database: " (:path config))
-  (io/delete-file (:trace config) true)
-  (io/delete-file (:file config)))
-
 (defrecord DatabaseFixture [config created]
   component/Lifecycle
 
@@ -76,11 +44,7 @@
     (if created ; already started
       this
       (do
-        (log/info "creating database fixture:" (:path config))
-        (ragtime.repl/migrate {:datastore  (ragtime.jdbc/sql-database (:rw config))
-                               :migrations (ragtime.jdbc/load-resources "migrations/magento-tests")
-                               :reporter   migration-reporter})
-        (log/info "migrated database fixture:" (:path config))
+        (db-utils/migrate-db config)
         (assoc this :created true))))
 
   (stop [this]
@@ -88,26 +52,24 @@
     (if (not created) ; already stopped
       this
       (do
-        (cleanup-db-fixture config)
+        (db-utils/destroy-temp-db config)
         (assoc this :created false)))))
 
-(defn new-db-fixture []
-  (map->DatabaseFixture {:config (gen-db-fixture-config)}))
-
-(defn db-fixture-config [db-fixture]
-  (:config db-fixture))
+(defn new-db-fixture [config]
+  (map->DatabaseFixture {:config config}))
 
 ; ------------------------------------------------------------------------------
 
 (def test-system-with-ro-db (atom nil))
 
 (defn fresh-system-with-ro-db []
-  (let [db-fixture (new-db-fixture)
-        db-config  (test-db-config-ro (db-fixture-config db-fixture))]
+  (let [temp-db (db-utils/create-temp-db :trace-level-system-out 0)
+        db-fixture (new-db-fixture temp-db)
+        db (db-utils/hikari-cp-temp-db-config temp-db)]
       (assoc (clojento.core/base-system)
              :db-fixture db-fixture
              :configurator (component/using
-                            (clojento.config/static-configurator {:db db-config})
+                            (clojento.config/static-configurator {:db db})
                             ; fake dependency to enforce startup order
                             {:db-fixture :db-fixture}))))
 
