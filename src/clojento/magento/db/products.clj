@@ -1,8 +1,30 @@
 (ns clojento.magento.db.products
-  (:require [hugsql.core :as hugsql]))
+  (:require [hugsql.core :as hugsql]
+            [jdbc.core :as jdbc]))
 
 (hugsql/def-db-fns     "clojento/magento/db/products.sql")
 (hugsql/def-sqlvec-fns "clojento/magento/db/products.sql")
+
+; ------------------------------------------------------------------------------
+
+(defn get-products [conn product-ids & {:keys [debug] :or {debug false}}]
+  (jdbc/atomic conn
+               (let [query-ids   (into (sorted-set) product-ids)
+                     variants    (variants conn {:product-ids query-ids}) #_"TODO add debug"
+                     entity-ids  (into query-ids (map :variant_id variants))]
+                 {:query-ids  query-ids
+                  :entity-ids entity-ids
+                  :variants variants
+                  #_"TODO add debug / meta"
+                  :entities (product-entities conn {:product-ids query-ids})
+                  :websites (product-websites conn {:product-ids query-ids})
+                  :stock    (product-stock    conn {:product-ids query-ids})
+                  :attributes-varchar  (product-attributes-varchar  conn {:product-ids query-ids})
+                  :attributes-text     (product-attributes-text     conn {:product-ids query-ids})
+                  :attributes-datetime (product-attributes-datetime conn {:product-ids query-ids})
+                  :attributes-int      (product-attributes-int      conn {:product-ids query-ids})
+                  :attributes-decimal  (product-attributes-decimal  conn {:product-ids query-ids})
+                  :url-keys (product-url-keys conn {:product-ids query-ids}) })))
 
 ; ------------------------------------------------------------------------------
 

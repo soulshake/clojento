@@ -1,6 +1,7 @@
 (ns clojento.magento.db
   (:require [clj-time.coerce :as tc]
             [clojento.config :as config]
+            [clojento.magento.db.products :as db-products]
             [clojure.tools.logging :as log]
             [com.stuartsierra.component :as component]
             [hikari-cp.core :as hikari]
@@ -112,6 +113,14 @@
                            :hits (count result)
                            :time (/ (- (System/nanoTime) starttime) 1e6)})
         result))))
+
+; ------------------------------------------------------------------------------
+
+; combine meta at this level?
+(defn get-products [db product-ids & {:keys [debug] :or {debug false}}]
+  (with-open [conn (connection db)]
+    (db-products/get-products conn product-ids :debug debug)))
+
 
 ; ------------------------------------------------------------------------------
 

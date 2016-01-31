@@ -75,3 +75,6 @@
 
 (defn db-show-tables []
   (clojento.magento.db/raw-jdbc-fetch (:db system) "show tables;"))
+
+(defn db-products [ & product-ids ]
+  (pp (mage-db/get-products (:db system) product-ids)))
