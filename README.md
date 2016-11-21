@@ -29,3 +29,9 @@ running tests in the repl:
 Copyright (C) 2011 Jean-Luc Geering
 
 Distributed under the MIT License (MIT).
+
+## See Also
+
+* Version 1, in Ruby: [maruto](https://github.com/jlgeering/maruto)
+* Version 3, in Elixir: [magixir](https://github.com/jlgeering/magixir)
+
