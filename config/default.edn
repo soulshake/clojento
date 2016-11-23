@@ -1,0 +1,3 @@
+; use in-memory db as default
+{:db {:adapter "h2"
+      :url "jdbc:h2:mem:default"}}

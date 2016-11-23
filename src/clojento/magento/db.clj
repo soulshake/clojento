@@ -1,14 +1,14 @@
 (ns clojento.magento.db
   (:require [clj-time.coerce :as tc]
-            [clojento.config :as config]
+            [clojento.config :refer [config]]
             [clojento.magento.db.products :as db-products]
             [clojure.tools.logging :as log]
-            [com.stuartsierra.component :as component]
             [hikari-cp.core :as hikari]
             [hugsql.core :as hugsql]
             [hugsql.adapter.clojure-jdbc :as cj-adapter]
             [jdbc.core :as jdbc]
-            [jdbc.proto :as proto]))
+            [jdbc.proto :as proto]
+            [mount.core :refer [defstate]]))
 
 (log/debug "loading clojento.magento.db namespace")
 
@@ -46,56 +46,45 @@
 
 ; see https://github.com/tomekw/hikari-cp
 ; all time values are specified in milliseconds
-(defn default-datasource-options []
+(def default-datasource-config
   {:auto-commit        true
    :read-only          false
-   :connection-timeout 30000
-   :validation-timeout 5000
+   :connection-timeout 1000
+   :validation-timeout 1000
    :idle-timeout       600000
    :max-lifetime       1800000
    :minimum-idle       2
    :maximum-pool-size  10
-   :pool-name          "db-pool"
-   :adapter            "mysql"})
+   :pool-name          "db-pool"})
 
-(defn datasource-options [configurator]
+(defn datasource-config [custom-config]
   (merge
-   (default-datasource-options)
-   (config/config configurator :db)))
+   default-datasource-config
+   custom-config))
 
-(defn make-datasource [configurator]
+; ------------------------------------------------------------------------------
+
+(defn connect [datasource-config]
   (log/info "starting connection pool")
-  (hikari/make-datasource (datasource-options configurator)))
+  {:config datasource-config
+   :pool   (hikari/make-datasource datasource-config)})
 
-(defrecord Database [configurator datasource queries]
-  component/Lifecycle
+(defn disconnect [pool]
+  (log/info "stopping connection pool")
+  (hikari/close-datasource pool))
 
-  (start [this]
-         (if datasource  ; already started
-           this
-           (assoc this
-                  :datasource (make-datasource configurator))))
+(defstate db :start (connect (datasource-config (:db config)))
+             :stop  (disconnect (:pool db)))
 
-  (stop [this]
-        (if (not datasource) ; already stopped
-          this
-          (do
-            (log/info "stopping connection pool")
-            (hikari/close-datasource datasource)
-            (assoc this
-                   :datasource nil)))))
+; ------------------------------------------------------------------------------
 
-; PUBLIC API
+(defn conn []
+  (jdbc/connection (:pool db)))
 
-(defn new-database []
-  "Database component requires a Configurator component"
-  (map->Database {}))
+; ------------------------------------------------------------------------------
 
-(defn connection [db]
-  (jdbc/connection (:datasource db)))
-
-(defn raw-jdbc-execute [db stmt-or-sqlvec & {:keys [debug] :or {debug false}}]
-  (with-open [conn (connection db)]
+(defn raw-jdbc-execute [stmt-or-sqlvec & {:keys [debug] :or {debug false}}]
+  (with-open [conn (conn)]
     (let [starttime (System/nanoTime)
           result (jdbc/execute conn stmt-or-sqlvec)]
       (if debug
@@ -104,8 +93,8 @@
                            :time (/ (- (System/nanoTime) starttime) 1e6)})
         result))))
 
-(defn raw-jdbc-fetch [db stmt-or-sqlvec & {:keys [debug] :or {debug false}}]
-  (with-open [conn (connection db)]
+(defn raw-jdbc-fetch [stmt-or-sqlvec & {:keys [debug] :or {debug false}}]
+  (with-open [conn (conn)]
     (let [starttime (System/nanoTime)
           result (jdbc/fetch conn stmt-or-sqlvec)]
       (if debug
@@ -117,14 +106,14 @@
 ; ------------------------------------------------------------------------------
 
 ; combine meta at this level?
-(defn get-products [db product-ids & {:keys [debug] :or {debug false}}]
-  (with-open [conn (connection db)]
+(defn get-products [product-ids & {:keys [debug] :or {debug false}}]
+  (with-open [conn (conn)]
     (db-products/get-products conn product-ids :debug debug)))
 
 
 ; ------------------------------------------------------------------------------
 
-(defn run-query [db query-name params & {:keys [debug] :or {debug false}}]
+(defn run-query [query-name params & {:keys [debug] :or {debug false}}]
   #_(let [q (get (:queries db) query-name)
         stmt (yq/sqlvec-raw (:split q) params)]
     (log/debug "fetching " stmt)
@@ -139,7 +128,7 @@
 
 ; ------------------------------------------------------------------------------
 
-#_(defn get-product-data [db query-id & {:keys [debug] :or {debug false}}]
+#_(defn get-product-data [query-id & {:keys [debug] :or {debug false}}]
   (let [starttime          (System/nanoTime)
         q-variants-info    (get-variants-info db query-id :debug debug)
         is-variant         (:is-variant q-variants-info)

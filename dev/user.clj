@@ -11,60 +11,70 @@
   ; [clojure.test :as test]
   ;)
 
-  (:require [com.stuartsierra.component :as component]
-            [clojure.tools.logging :as log]
-            [clojure.tools.namespace.repl :refer [refresh refresh-all]]
-            [clojure.pprint :refer [pprint] :rename {pprint pp}]
+  (:require [clojure.tools.logging :as log]
+            [clojure.tools.namespace.repl :as tn]
             [clojento.logback :as logback]
             [clojento.core :as app]
+            [clojento.config :as config]
             [clojento.magento :as mage]
             [clojento.magento.db :as mage-db]
             [clojento.magento.db.products :as mage-db-products]
             [clojento.magento.t_db :as mage-db-test]
+            [clojento.mount.logging :refer [with-logging-status]]
             [ragtime.jdbc]
             [ragtime.repl]
-            [midje.repl :refer [autotest]]))
-
-(def system nil)
-
-(defn init []
-  (alter-var-root #'system
-    (constantly (app/local-live-system))))
+            [midje.repl :refer [autotest]]
+            [mount.core :as mount :refer [defstate]]))
 
 (defn start []
-  (alter-var-root #'system component/start))
+  (log/info "*** START ***")
+  (with-logging-status)
+  (mount/start))
+
+; (mount/start #'app.conf/config
+;              #'app.db/conn
+;              #'app.www/nyse-app
+;              #'app.example/nrepl)
 
 (defn stop []
-  (alter-var-root #'system
-    (fn [s] (when s (component/stop s)))))
+  (log/info "*** STOP ***")
+  (mount/stop))
+
+(defn refresh []
+  (log/info "*** REFRESH ***")
+  (stop)
+  (tn/refresh))
+
+(defn refresh-all []
+  (log/info "*** REFRESH-ALL ***")
+  (stop)
+  (tn/refresh-all))
 
 (defn go []
   (logback/set-level "ROOT" :info)
-  (init)
   (start)
   :ready)
 
 (defn reset []
+  (log/info "*** RESET ***")
   (stop)
-  (refresh :after 'user/go))
+  (tn/refresh :after 'user/go))
 
-(defn asdf []
-  (mage/load-product (:magento system) 806))
+; (defn asdf []
+;   (mage/load-product (:magento system) 806))
 
-(def test-db "jdbc:mysql://192.168.99.100:32776/magento-migrations?user=root&password=123")
-
-(defn migrations-config [connection-url]
-  {:datastore  (ragtime.jdbc/sql-database connection-url)
+(defstate migrations-config :start
+  {:datastore  (ragtime.jdbc/sql-database (get-in config/config [:db :url]))
    :migrations (ragtime.jdbc/load-resources "migrations/magento")})
 
 (defn db-migrate []
   ; always returns nil
-  (ragtime.repl/migrate (migrations-config test-db))
+  (ragtime.repl/migrate migrations-config)
   :done)
 
 (defn db-rollback []
   ; always returns nil
-  (ragtime.repl/rollback (migrations-config test-db))
+  (ragtime.repl/rollback migrations-config)
   :done)
 
 (defn db-rollback-all []
@@ -74,7 +84,7 @@
   :done)
 
 (defn db-show-tables []
-  (clojento.magento.db/raw-jdbc-fetch (:db system) "show tables;"))
+  (clojento.magento.db/raw-jdbc-fetch "show tables;"))
 
 (defn db-products [ & product-ids ]
-  (pp (mage-db/get-products (:db system) product-ids)))
+  (mage-db/get-products product-ids))

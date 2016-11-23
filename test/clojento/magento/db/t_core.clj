@@ -6,8 +6,6 @@
             [clj-time.core :as t]
             [clojure.tools.logging :as log]))
 
-(def test-system t_db/test-system-with-ro-db)
-
 (namespace-state-changes [(before :facts (t_db/setup-test-system-with-ro-db))])
 
 ; ------------------------------------------------------------------------------
@@ -20,17 +18,17 @@
 
 (facts "db and migrations"
   (fact "migration table exists"
-        (db/raw-jdbc-fetch (:db @test-system) "SHOW TABLES;") => (contains {:table_name "ragtime_migrations", :table_schema "public"}))
+        (db/raw-jdbc-fetch "SHOW TABLES;") => (contains {:table_name "ragtime_migrations", :table_schema "public"}))
   (fact "store table exists"
-        (db/raw-jdbc-fetch (:db @test-system) "SHOW TABLES;") => (contains {:table_name "core_store", :table_schema "public"}))
+        (db/raw-jdbc-fetch "SHOW TABLES;") => (contains {:table_name "core_store", :table_schema "public"}))
   (fact "make sure db is read-only"
-        (db/raw-jdbc-execute (:db @test-system) write-query) => (throws org.h2.jdbc.JdbcBatchUpdateException #"read only"))
+        (db/raw-jdbc-execute write-query) => (throws org.h2.jdbc.JdbcBatchUpdateException #"read only"))
   (fact "db contains 3 websites (admin + 2) and 2 stores"
-        (count (db/raw-jdbc-fetch (:db @test-system) "SELECT * FROM core_website;")) => 3
-        (count (db/raw-jdbc-fetch (:db @test-system) "SELECT * FROM core_store;")) => 2
-        (count (with-open [conn (db/connection (:db @test-system))]
+        (count (db/raw-jdbc-fetch "SELECT * FROM core_website;")) => 3
+        (count (db/raw-jdbc-fetch "SELECT * FROM core_store;")) => 2
+        (count (with-open [conn (db/conn)]
                  (db-core/websites conn))) => 3
-        (count (with-open [conn (db/connection (:db @test-system))]
+        (count (with-open [conn (db/conn)]
                  (db-core/websites conn {} {:debug true}))) => 3)
   (fact "meta contains :hits"
-        (meta (db/raw-jdbc-fetch (:db @test-system) "SELECT * FROM core_website;" :debug true)) => (contains {:hits 3})))
+        (meta (db/raw-jdbc-fetch "SELECT * FROM core_website;" :debug true)) => (contains {:hits 3})))

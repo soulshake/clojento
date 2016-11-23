@@ -6,14 +6,12 @@
             [clj-time.core :as t]
             [clojure.tools.logging :as log]))
 
-(def test-system t_db/test-system-with-ro-db)
-
 (namespace-state-changes [(before :facts (t_db/setup-test-system-with-ro-db))])
 
 ; ------------------------------------------------------------------------------
 
 (facts "query product-entities"
-  (with-state-changes [(around :facts (with-open [conn (db/connection (:db @test-system))] ?form))]
+  (with-state-changes [(around :facts (with-open [conn (db/conn)] ?form))]
     (fact "get missing product(s)"
           (product-entities conn {:product-ids [-1 -2]}) => [])
     (fact "get product with id 1"
@@ -28,7 +26,7 @@
           (type (:date-created (first (product-entities conn {:product-ids [1]})))) => org.joda.time.DateTime)))
 
 (facts "query product-websites"
-  (with-state-changes [(around :facts (with-open [conn (db/connection (:db @test-system))] ?form))]
+  (with-state-changes [(around :facts (with-open [conn (db/conn)] ?form))]
     (fact "get missing product(s)"
           (product-websites conn {:product-ids [-1 -2]}) => [])
     (fact "get product with id 1"
@@ -41,7 +39,7 @@
           (count (product-websites conn {:product-ids [3 2 1]})) => 4)))
 
 (facts "query product-stock"
-  (with-state-changes [(around :facts (with-open [conn (db/connection (:db @test-system))] ?form))]
+  (with-state-changes [(around :facts (with-open [conn (db/conn)] ?form))]
     (fact "get missing product"
           (product-stock conn {:product-ids [-1]}) => [])
     (fact "get product with id 1"
@@ -49,7 +47,7 @@
                                                             {:id 1 :website-id 2 :stock-id 1 :qty 0.0000M :stock-status 0}] :in-any-order))))
 
 (facts "query product-attributes-varchar"
-  (with-state-changes [(around :facts (with-open [conn (db/connection (:db @test-system))] ?form))]
+  (with-state-changes [(around :facts (with-open [conn (db/conn)] ?form))]
     (fact "get missing product"
           (product-attributes-varchar conn {:product-ids [-1]}) => [])
     (fact "get product with id 1"
@@ -58,7 +56,7 @@
                                                                          {:id 1 :attribute-id 73 :store-id 0 :value "This is the simple product with id 1"}] :in-any-order))))
 
 (facts "query product-attributes-text"
-  (with-state-changes [(around :facts (with-open [conn (db/connection (:db @test-system))] ?form))]
+  (with-state-changes [(around :facts (with-open [conn (db/conn)] ?form))]
     (fact "get missing product"
           (product-attributes-text conn {:product-ids [-1]}) => [])
     (fact "get product with id 1"
@@ -66,7 +64,7 @@
                                                                       (contains {:id 1 :attribute-id 62 :store-id 0 :value anything})] :in-any-order)))) ; TODO h2 returns a org.h2.jdbc.JdbcClob, .toString == "This is the short description for product 1"
 
 (facts "query product-attributes-datetime"
-  (with-state-changes [(around :facts (with-open [conn (db/connection (:db @test-system))] ?form))]
+  (with-state-changes [(around :facts (with-open [conn (db/conn)] ?form))]
     (fact "get missing product"
           (product-attributes-datetime conn {:product-ids [-1]}) => [])
     (fact "get product with id 1"
@@ -74,7 +72,7 @@
                                                                           (contains {:id 1 :attribute-id 67 :store-id 1 :value anything})] :in-any-order)))) ; TODO checking dates
 
 (facts "query variants"
-  (with-state-changes [(around :facts (with-open [conn (db/connection (:db @test-system))] ?form))]
+  (with-state-changes [(around :facts (with-open [conn (db/conn)] ?form))]
     (fact "get missing product"
           (variants conn {:product-ids [-1]}) => [])
     (fact "get simple product"
@@ -97,7 +95,7 @@
 ; ------------------------------------------------------------------------------
 
 (facts "get-variants-info"
-  (with-state-changes [(around :facts (with-open [conn (db/connection (:db @test-system))] ?form))]
+  (with-state-changes [(around :facts (with-open [conn (db/conn)] ?form))]
     (fact "not found"
           (get-variants-info conn -1) => {:found-variants false :is-variant false})
     (fact "simple product"

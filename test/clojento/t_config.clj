@@ -14,6 +14,3 @@
 (facts "reading and merging files"
   (fact "contains the key from file 1 and 2"
         (load-config ["config/test/configurator_1.edn" "config/test/configurator_2.edn"]) => {:a {:aa "new" :ab "ab"} :b "b" :c "c"}))
-
-(fact "static configurator"
-      (config (static-configurator {:a "a"}) :a) => "a")
