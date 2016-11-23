@@ -1,7 +1,7 @@
 (ns clojento.config
   (:require [clojure.edn :as edn]
             [clojure.tools.logging :as log]
-            [mount.core :refer [defstate]]))
+            [mount.lite :refer [defstate]]))
 
 (log/debug "loading clojento.config namespace")
 

@@ -1,8 +1,9 @@
 (ns clojento.utils.temp-db
   (:require [clojure.java.io :as io]
             [clojure.tools.logging :as log]
+            [clojento.magento.db :as m.db]
             [clojento.utils.db :as db-utils]
-            [mount.core :refer [defstate]]
+            [mount.lite :as mount]
             [ragtime.jdbc]
             [ragtime.repl]))
 
@@ -70,9 +71,5 @@
   (db-utils/disconnect db)
   (destroy-temp-db (:db db)))
 
-; maybe configure :on-reload
-; see https://github.com/tolitius/mount#on-reload
-; (defstate db :start (create-and-connect)
-;              :stop  (disconnect-and-destroy db))
-
-(def db "")
+(def db (mount/state :start (create-and-connect)
+                     :stop  (disconnect-and-destroy m.db/db)))

@@ -6,7 +6,7 @@
             [clj-time.core :as t]
             [clojure.tools.logging :as log]))
 
-; (use-fixtures :once t_db/ro-db-fixture)
+(use-fixtures :once t_db/ro-db-fixture)
 
 ; ------------------------------------------------------------------------------
 
@@ -16,14 +16,14 @@
 
 ; ------------------------------------------------------------------------------
 
-; (deftest tables
-;   (testing "migration table exists"
-;     (is (= {} (db/raw-jdbc-fetch "SHOW TABLES;")))))
+(deftest tables
+  (let [tables (db/raw-jdbc-fetch "SHOW TABLES;")]
+    (testing "migration table exists"
+      (is (some #(= {:table_name "ragtime_migrations", :table_schema "public"} %) tables)))
+    (testing "store table exists"
+      (is (some #(= {:table_name "core_store", :table_schema "public"} %) tables)))))
+
 ; (facts "db and migrations"
-;   (fact "migration table exists"
-;         (db/raw-jdbc-fetch "SHOW TABLES;") => (contains {:table_name "ragtime_migrations", :table_schema "public"}))
-;   (fact "store table exists"
-;         (db/raw-jdbc-fetch "SHOW TABLES;") => (contains {:table_name "core_store", :table_schema "public"}))
 ;   (fact "make sure db is read-only"
 ;         (db/raw-jdbc-execute write-query) => (throws org.h2.jdbc.JdbcBatchUpdateException #"read only"))
 ;   (fact "db contains 3 websites (admin + 2) and 2 stores"

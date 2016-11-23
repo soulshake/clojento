@@ -4,7 +4,7 @@
             [clojento.utils.db :as db-utils]
             [clojure.tools.logging :as log]
             [jdbc.core :as jdbc]
-            [mount.core :refer [defstate]]))
+            [mount.lite :refer [defstate]]))
 
 (log/debug "loading clojento.magento.db namespace")
 

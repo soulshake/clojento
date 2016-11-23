@@ -1,10 +1,12 @@
 (ns clojento.magento.db.t_products
   (:require [clojure.test :refer :all]
-            [clojento.magento.db :as db]
+            ; [clojento.magento.db :as db]
             [clojento.magento.t_db :as t_db]
-            [clojento.magento.db.products :refer :all]
+            [clojento.magento.db.products :as nut]
             [clj-time.core :as t]
             [clojure.tools.logging :as log]))
+
+(use-fixtures :once t_db/ro-db-fixture)
 
 ; (namespace-state-changes [(before :facts (t_db/setup-test-system-with-ro-db))])
 ;

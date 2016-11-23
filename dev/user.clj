@@ -24,7 +24,7 @@
             [clojento.mount.logging :refer [with-logging-status]]
             [ragtime.jdbc]
             [ragtime.repl]
-            [mount.core :as mount :refer [defstate]]))
+            [mount.lite :as mount :refer [defstate]]))
 
 (defn logs-info! []
   (logback/set-level! "ROOT" :info))

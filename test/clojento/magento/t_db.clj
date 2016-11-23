@@ -5,25 +5,23 @@
             [clojento.utils.temp-db :as temp-db]
             [clj-time.core :as t]
             [clojure.tools.logging :as log]
-            [mount.core :as mount]))
+            [mount.lite :as mount]))
 
 (log/debug "loading clojento.magento.t_db namespace")
 
 ; ------------------------------------------------------------------------------
 
-(def db-config-in-memory
+(def config-in-memory-db
   {:db {:adapter  "h2"
-   :url      (str "jdbc:h2:mem:" (gensym))
-   :connection-timeout 1000
-   :validation-timeout 1000
-   :maximum-pool-size  3}})
+        :url      (str "jdbc:h2:mem:" (gensym))
+        :connection-timeout 1000
+        :validation-timeout 1000
+        :maximum-pool-size  3}})
 
 (defn setup-in-memory-db []
   (log/info "starting setup: in-memory DB")
-  (-> (mount/only #{#'clojento.config/config
-                    #'clojento.magento.db/db})
-      (mount/swap {#'clojento.config/config db-config-in-memory})
-      (mount/start)))
+  (mount/start (mount/up-to #'clojento.magento.db/db)
+               (mount/substitute #'clojento.config/config (mount/state :start config-in-memory-db))))
 
 (defn teardown-in-memory-db []
   (mount/stop)
@@ -36,7 +34,15 @@
 
 ; ------------------------------------------------------------------------------
 
-; (def test-system-with-ro-db (atom nil))
+(defn setup-ro-db []
+  (log/info "creating test system with read-only DB")
+  (mount/start (mount/up-to #'clojento.magento.db/db)
+               (mount/substitute #'clojento.magento.db/db temp-db/db)))
+
+(defn teardown-ro-db []
+  (log/info "starting teardown: test system with read-only DB")
+  (mount/stop)
+  (log/info "teardown complete: test system with read-only DB"))
 
 ; (defn setup-test-system-with-ro-db []
 ;   ; (when (nil? @test-system-with-ro-db))
@@ -48,10 +54,10 @@
 ;   (mount/stop)
 ;   (log/info "teardown complete: test system with read-only DB"))
 ;
-; (defn ro-db-fixture [f]
-;   (setup-in-memory-db)
-;   (f)
-;   (teardown-in-memory-db))
+(defn ro-db-fixture [f]
+  (setup-ro-db)
+  (f)
+  (teardown-ro-db))
 
 ; ------------------------------------------------------------------------------
 
