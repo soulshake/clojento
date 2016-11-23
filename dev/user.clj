@@ -21,7 +21,6 @@
             [clojento.magento.db :as mage-db]
             [clojento.magento.db.products :as mage-db-products]
             [clojento.magento.t_db :as mage-db-test]
-            [clojento.mount.logging :refer [with-logging-status]]
             [ragtime.jdbc]
             [ragtime.repl]
             [mount.lite :as mount :refer [defstate]]))
@@ -34,7 +33,6 @@
 
 (defn start []
   (log/info "*** START ***")
-  (with-logging-status)
   (mount/start))
 
 ; (mount/start #'app.conf/config
