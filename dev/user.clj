@@ -26,6 +26,12 @@
             [ragtime.repl]
             [mount.core :as mount :refer [defstate]]))
 
+(defn logs-info! []
+  (logback/set-level! "ROOT" :info))
+
+(defn logs-debug! []
+  (logback/set-level! "ROOT" :debug))
+
 (defn start []
   (log/info "*** START ***")
   (with-logging-status)
@@ -51,7 +57,7 @@
   (tn/refresh-all))
 
 (defn go []
-  (logback/set-level "ROOT" :info)
+  (logs-info!)
   (start)
   :ready)
 

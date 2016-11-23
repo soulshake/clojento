@@ -28,6 +28,6 @@
         loggers (.getLoggerList logger-context)]
     (map logger-2-map loggers)))
 
-(defn set-level [name level]
+(defn set-level! [name level]
   (let [logger (LoggerFactory/getLogger name)]
     (.setLevel logger (keyword-2-level level))))
