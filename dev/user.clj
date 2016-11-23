@@ -11,7 +11,8 @@
   ; [clojure.test :as test]
   ;)
 
-  (:require [clojure.tools.logging :as log]
+  (:require [clojure.test :refer [run-tests]]
+            [clojure.tools.logging :as log]
             [clojure.tools.namespace.repl :as tn]
             [clojento.logback :as logback]
             [clojento.core :as app]
@@ -23,7 +24,6 @@
             [clojento.mount.logging :refer [with-logging-status]]
             [ragtime.jdbc]
             [ragtime.repl]
-            [midje.repl :refer [autotest]]
             [mount.core :as mount :refer [defstate]]))
 
 (defn start []

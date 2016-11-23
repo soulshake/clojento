@@ -19,7 +19,5 @@
                  [ragtime "0.5.2"]
                  [robert/hooke "1.3.0"]]
   :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.2.11"]
-                                  [midje "1.8.3"]
                                   [com.h2database/h2 "1.4.191"]]
-                   :plugins [[lein-midje "3.2"]]
                    :source-paths ["dev"]}})

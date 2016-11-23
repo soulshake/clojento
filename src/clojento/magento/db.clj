@@ -1,80 +1,15 @@
 (ns clojento.magento.db
-  (:require [clj-time.coerce :as tc]
-            [clojento.config :refer [config]]
+  (:require [clojento.config :refer [config]]
             [clojento.magento.db.products :as db-products]
+            [clojento.utils.db :as db-utils]
             [clojure.tools.logging :as log]
-            [hikari-cp.core :as hikari]
-            [hugsql.core :as hugsql]
-            [hugsql.adapter.clojure-jdbc :as cj-adapter]
             [jdbc.core :as jdbc]
-            [jdbc.proto :as proto]
             [mount.core :refer [defstate]]))
 
 (log/debug "loading clojento.magento.db namespace")
 
-; ------------------------------------------------------------------------------
-; set global default adapter
-
-(hugsql/set-adapter! (cj-adapter/hugsql-adapter-clojure-jdbc))
-
-; ------------------------------------------------------------------------------
-; convert java.sql.Timestamp <=> org.joda.time.DateTime
-; see https://github.com/clj-time/clj-time/blob/master/src/clj_time/jdbc.clj
-; and https://github.com/funcool/clojure.jdbc/blob/master/src/jdbc/proto.clj
-; and https://github.com/funcool/clojure.jdbc/blob/master/src/jdbc/impl.clj
-
-; TODO pull request for doc at http://funcool.github.io/clojure.jdbc/latest/#extend-sql-types
-
-(extend-protocol proto/ISQLResultSetReadColumn
-  java.sql.Timestamp
-  (from-sql-type [v _2 _3 _4]
-    (tc/from-sql-time v))
-  java.sql.Date
-  (from-sql-type [v _2 _3 _4]
-    (tc/from-sql-date v))
-  java.sql.Time
-  (result-set-read-column [v _2 _3 _4]
-    (org.joda.time.DateTime. v)))
-
-(extend-protocol proto/ISQLType
-  org.joda.time.DateTime
-  (set-stmt-parameter! [v conn stmt index]
-    (.setObject stmt index (proto/as-sql-type v conn)))
-  (as-sql-type [v _] (tc/to-sql-time v)))
-
-; ------------------------------------------------------------------------------
-
-; see https://github.com/tomekw/hikari-cp
-; all time values are specified in milliseconds
-(def default-datasource-config
-  {:auto-commit        true
-   :read-only          false
-   :connection-timeout 1000
-   :validation-timeout 1000
-   :idle-timeout       600000
-   :max-lifetime       1800000
-   :minimum-idle       2
-   :maximum-pool-size  10
-   :pool-name          "db-pool"})
-
-(defn datasource-config [custom-config]
-  (merge
-   default-datasource-config
-   custom-config))
-
-; ------------------------------------------------------------------------------
-
-(defn connect [datasource-config]
-  (log/info "starting connection pool")
-  {:config datasource-config
-   :pool   (hikari/make-datasource datasource-config)})
-
-(defn disconnect [pool]
-  (log/info "stopping connection pool")
-  (hikari/close-datasource pool))
-
-(defstate db :start (connect (datasource-config (:db config)))
-             :stop  (disconnect (:pool db)))
+(defstate db :start (db-utils/connect (db-utils/datasource-config (:db config)))
+             :stop  (db-utils/disconnect db))
 
 ; ------------------------------------------------------------------------------
 
