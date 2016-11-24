@@ -23,15 +23,21 @@
     (testing "store table exists"
       (is (some #(= {:table_name "core_store", :table_schema "public"} %) tables)))))
 
-; (facts "db and migrations"
-;   (fact "make sure db is read-only"
-;         (db/raw-jdbc-execute write-query) => (throws org.h2.jdbc.JdbcBatchUpdateException #"read only"))
-;   (fact "db contains 3 websites (admin + 2) and 2 stores"
-;         (count (db/raw-jdbc-fetch "SELECT * FROM core_website;")) => 3
-;         (count (db/raw-jdbc-fetch "SELECT * FROM core_store;")) => 2
-;         (count (with-open [conn (db/conn)]
-;                  (db-core/websites conn))) => 3
-;         (count (with-open [conn (db/conn)]
-;                  (db-core/websites conn {} {:debug true}))) => 3)
-;   (fact "meta contains :hits"
-;         (meta (db/raw-jdbc-fetch "SELECT * FROM core_website;" :debug true)) => (contains {:hits 3})))
+(deftest read-only
+  (testing "make sure db is read-only"
+    (is (thrown? org.h2.jdbc.JdbcBatchUpdateException (db/raw-jdbc-execute write-query)))))
+
+(deftest data
+  (testing "db contains 3 websites (admin + 2)"
+    (is (= 3 (count (db/raw-jdbc-fetch "SELECT * FROM core_website;"))))
+    (is (= 3 (count (with-open [conn (db/conn)]
+                      (nut/websites conn)))))
+    (is (= 3 (count (with-open [conn (db/conn)]
+                      (nut/websites conn {} {:debug true}))))))
+  (testing "db contains 2 stores"
+    (is (= 2 (count (db/raw-jdbc-fetch "SELECT * FROM core_store;")))))
+  (testing "meta contains :hits"
+    (is (= 3 (:hits (meta (db/raw-jdbc-fetch "SELECT * FROM core_website;" :debug true)))))
+    ; no meta on nut/websites (yet?)
+    #_(is (= 3 (:hits (meta (with-open [conn (db/conn)]
+                            (nut/websites conn {} {:debug true}))))))))
