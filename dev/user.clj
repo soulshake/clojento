@@ -19,8 +19,6 @@
             [clojento.config :as config]
             [clojento.magento :as mage]
             [clojento.magento.db :as mage-db]
-            [clojento.magento.db.products :as mage-db-products]
-            [clojento.magento.t_db :as mage-db-test]
             [ragtime.jdbc]
             [ragtime.repl]
             [mount.lite :as mount :refer [defstate]]))
