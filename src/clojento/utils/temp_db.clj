@@ -7,6 +7,8 @@
             [ragtime.jdbc]
             [ragtime.repl]))
 
+(log/debug "loading clojento.utils.temp-db namespace")
+
 ; ------------------------------------------------------------------------------
 
 (defn migration-reporter [op id]

@@ -25,6 +25,13 @@
             [ragtime.repl]
             [mount.lite :as mount :refer [defstate]]))
 
+(log/debug "loading user namespace")
+
+(defn mount-logger [state status]
+  (log/debug state status))
+
+(mount/log-fn mount-logger)
+
 (defn logs-info! []
   (logback/set-level! "ROOT" :info))
 
