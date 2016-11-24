@@ -32,6 +32,7 @@
    :delete-on-exit true})
 
 (defn create-temp-db [ & {:as options} ]
+  (throw (Exception. "my exception message"))
   (let [config   (merge temp-db-defaults options)
         file     (java.io.File/createTempFile (:name-prefix config) ".mv.db")
         absolute (.getAbsolutePath file)
