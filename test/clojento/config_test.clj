@@ -1,4 +1,4 @@
-(ns clojento.t_config
+(ns clojento.config-test
   (:require [clojure.test :refer :all]
             [clojento.config :as nut]
             [clojure.tools.logging :as log]))

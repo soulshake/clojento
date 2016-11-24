@@ -1,12 +1,12 @@
-(ns clojento.magento.db.t_core
+(ns clojento.magento.db.core-test
   (:require [clojure.test :refer :all]
             [clojento.magento.db :as db]
-            [clojento.magento.t_db :as t_db]
+            [clojento.magento.db-test :as db-test]
             [clojento.magento.db.core :as nut]
             [clj-time.core :as t]
             [clojure.tools.logging :as log]))
 
-(use-fixtures :once t_db/ro-db-fixture)
+(use-fixtures :once db-test/ro-db-fixture)
 
 ; ------------------------------------------------------------------------------
 

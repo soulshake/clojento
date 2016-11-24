@@ -1,4 +1,4 @@
-(ns clojento.magento.t_db
+(ns clojento.magento.db-test
   (:require [clojure.test :refer :all]
             [clojento.magento.db :as nut]
             [clojento.magento.db.core :as db-core]
