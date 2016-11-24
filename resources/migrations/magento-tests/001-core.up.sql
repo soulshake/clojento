@@ -17,7 +17,7 @@ CREATE TABLE `core_website` (
 
 --;;
 
-CREATE TABLE `core_store_group` (
+CREATE TABLEE `core_store_group` (
   `group_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Group Id',
   `website_id` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT 'Website Id',
   `name` varchar(255) NOT NULL COMMENT 'Store Group Name',
